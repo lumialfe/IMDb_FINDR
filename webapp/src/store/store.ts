@@ -200,7 +200,7 @@ export const store: Store<State> = createStore({
         },
     }
 });
-;
+
 
 interface Media {
     id: string,
