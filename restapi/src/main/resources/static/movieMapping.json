@@ -1,0 +1,40 @@
+{
+	"mappings":{
+		"properties":{
+			"tconst":{
+				"type":"keyword"
+			},
+			"titleType": {
+				"type": "text"
+			},
+			"primaryTitle":{
+				"type":"text"
+			},
+			"originalTitle":{
+				"type":"text"
+			},
+			"isAdult": {
+				"type":"boolean"
+			},
+			"startYear":{
+				"type":"integer"
+			},
+			"endYear":{
+				"type":"integer"
+			},
+			"runtimeMinutes":{
+				"type":"integer"
+			},
+			"genres":{
+				"type":"keyword"
+			},
+			"avgRating":{
+				"type":"double"
+			},
+			"numVotes":{
+				"type":"integer"
+			}
+		}
+	}
+
+}
