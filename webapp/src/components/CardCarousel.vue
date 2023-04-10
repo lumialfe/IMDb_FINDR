@@ -7,7 +7,7 @@
       </button>
       <div class="carousel--scroll-panel" id="scroll" ref="scroll">
         <div class="carousel--cards">
-          <div v-for="mediaItem in media" class="carousel--card">
+          <div v-for="(mediaItem, index) in media" class="carousel--card">
             <MovieCard :media="mediaItem"></MovieCard>
           </div>
         </div>
@@ -36,6 +36,9 @@ export default defineComponent({
         divContent.scrollLeft += 242;
       }
     },
+  },
+  created() {
+    console.log(this.media);
   }
 });
 </script>

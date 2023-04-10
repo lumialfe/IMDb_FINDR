@@ -14,7 +14,7 @@ interface State {
 
 function fetchTrending(): Media[] {
     let baseURL = "http://localhost:8080/imdb/_search/";
-    let url = baseURL + "recommended" + "?year=" + new Date().getFullYear() + "&size=20";
+    let url = baseURL + "recommended" + "?year=" + (new Date().getFullYear() - 1) + "&size=20";
     return fetchMedia(url);
 }
 
@@ -28,7 +28,6 @@ function fetchMedia(url: string,): Media[] {
     let ret: Media[] = [];
     fetch(url).then((response) => response.json())
         .then((data) => {
-            console.log(data);
             for (let media of data) {
                 let m: Media = {
                     id: media.tconst,
@@ -142,8 +141,9 @@ export const store: Store<State> = createStore({
             return state.FINDR;
         },
         getTrending(state: State): Media[] {
+            console.log(fetchTrending());
             state.trending = fetchTrending();
-            return state.trending;
+            return fetchTrending();
         },
         getLikedMedia(state: State): Media[] {
             return state.likedMedia;
