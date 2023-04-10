@@ -1,5 +1,4 @@
 <template>
-  <PopUp></PopUp>
   <div class="main--main">
     <FINDR_Choice_Carousel v-if="store.getters.getLikedMedia.length > 0" title="Your FINDR™ Choices"
                   :media="store.getters.getLikedMedia"></FINDR_Choice_Carousel>
@@ -22,11 +21,10 @@ import CardCarousel from "./CardCarousel.vue";
 import ResultsPage from "@/components/ResultsPage.vue";
 import MainRecommended from "@/components/MainRecommended.vue";
 import FINDR_Choice_Carousel from "@/components/FINDR/FINDR_Choice_Carousel.vue";
-import PopUp from "@/components/FINDR/PopUp.vue";
 
 export default {
   name: "MainPage",
-  components: {PopUp, FINDR_Choice_Carousel, MainRecommended, ResultsPage, CardCarousel},
+  components: {FINDR_Choice_Carousel, MainRecommended, ResultsPage, CardCarousel},
   computed: {
     store() {
       return store
