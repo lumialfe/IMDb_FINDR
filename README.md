@@ -13,7 +13,7 @@ search results.
 
 ## Preview
 
-<img width="1440" alt="Screenshot 2023-03-31 at 10 29 14" src="https://user-images.githubusercontent.com/60442261/229068015-3b974ff0-24e0-4ca9-949c-37090b0ea5aa.png">
+<img width="1440" alt="Screenshot 2023-04-10 at 09 31 52" src="https://user-images.githubusercontent.com/60442261/230851182-3b7f7a57-e85f-45ce-9a98-9940546618db.png">
 
 
 ## Project Setup
