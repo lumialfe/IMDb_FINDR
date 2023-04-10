@@ -8,7 +8,7 @@
     <div v-else class="main--main--main>">
       <MainRecommended :media="store.getters.getFINDRMediaDemo.slice(0, 4)"></MainRecommended>
 
-      <CardCarousel title="Trending Now" :media="store.getters.getFINDRMediaDemo"></CardCarousel>
+      <CardCarousel title="Trending Now" :media="store.getters.getTrending"></CardCarousel>
       <CardCarousel title="New Releases" :media="store.getters.getFINDRMediaDemo"></CardCarousel>
       <CardCarousel title="Soon Available" :media="store.getters.getFINDRMediaDemo"></CardCarousel>
     </div>

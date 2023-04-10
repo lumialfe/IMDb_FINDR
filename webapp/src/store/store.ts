@@ -1,4 +1,7 @@
-import {createStore, Store} from "vuex";
+import {
+    createStore,
+    Store
+} from "vuex";
 
 interface State {
     FINDR: boolean,
@@ -6,11 +9,45 @@ interface State {
     dislikedMedia: Media[],
     FINDRMedia: Media[],
     results: Media[],
+    trending: Media[],
+}
+
+function fetchTrending(): Media[] {
+    let baseURL = "http://localhost:8080/imdb/_search/";
+    let url = baseURL + "recommended" + "?year=" + new Date().getFullYear() + "&size=20";
+    return fetchMedia(url);
+}
+
+function fetchNew() {
+    let baseURL = "http://localhost:8080/imdb/_search/";
+    let url = baseURL + "range" + "?from=" + (new Date().getFullYear() - 1) + "&size=20";
+    let res = fetchMedia(url);
+}
+
+function fetchMedia(url: string,): Media[] {
+    let ret: Media[] = [];
+    fetch(url).then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            for (let media of data) {
+                let m: Media = {
+                    id: media.tconst,
+                    title: media.primaryTitle,
+                    genres: [],
+                    averageRating: media.averageRating,
+                };
+                fetchMovieData(m);
+                ret.push(m);
+            }
+        }).catch((ex) => {
+        console.log(ex); // Log Exception on console.
+    });
+    return ret;
 }
 
 function fetchMovieData(media: Media) {
-    let baseURL = "https://api.themoviedb.org/3/movie/";
-    let apiKEY = "89d117037278a5d054a427790b60933e";
+    const baseURL = "https://api.themoviedb.org/3/movie/";
+    const apiKEY = "89d117037278a5d054a427790b60933e";
     let url = baseURL + media.id + "?api_key=" + apiKEY;
 
     fetch(url).then(response => response.json()).then(data => {
@@ -97,11 +134,16 @@ export const store: Store<State> = createStore({
         dislikedMedia: [],
         FINDRMedia: [],
         results: [],
+        trending: [],
     },
 
     getters: {
         getFINDR(state: State): boolean {
             return state.FINDR;
+        },
+        getTrending(state: State): Media[] {
+            state.trending = fetchTrending();
+            return state.trending;
         },
         getLikedMedia(state: State): Media[] {
             return state.likedMedia;
@@ -198,7 +240,7 @@ export const store: Store<State> = createStore({
             state.dislikedMedia = [];
             weightFINDRChoices(state.likedMedia, state.dislikedMedia);
         },
-    }
+    },
 });
 
 
@@ -212,4 +254,10 @@ interface Media {
     backdropPath?: string,
     trailer?: string,
     imdbLink?: string,
+    type?: string,
+    runtimeMinutes?: number,
+    isAdult?: boolean,
+    startYear?: number,
+    directors?: string[],
+    starring?: string[],
 }
