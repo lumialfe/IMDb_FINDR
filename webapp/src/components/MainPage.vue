@@ -1,16 +1,17 @@
 <template>
   <div class="main--main">
     <FINDR_Choice_Carousel v-if="store.getters.getLikedMedia.length > 0" title="Your FINDR™ Choices"
-                  :media="store.getters.getLikedMedia"></FINDR_Choice_Carousel>
+                           :media="store.getters.getLikedMedia"></FINDR_Choice_Carousel>
     <div v-if="store.getters.getResults.length > 0" class="main--main--results">
       <ResultsPage v-bind:media="store.getters.getResults"></ResultsPage>
     </div>
     <div v-else class="main--main--main>">
-      <MainRecommended :media="store.getters.getFINDRMediaDemo.slice(0, 4)"></MainRecommended>
+      <MainRecommended :media="store.getters.getTrending.slice(0, 4)"></MainRecommended>
 
       <CardCarousel title="Trending Now" :media="store.getters.getTrending"></CardCarousel>
-<!--      <CardCarousel title="New Releases" :media="store.getters.getFINDRMediaDemo"></CardCarousel>-->
-<!--      <CardCarousel title="Soon Available" :media="store.getters.getFINDRMediaDemo"></CardCarousel>-->
+      <CardCarousel title="Top New Releases" :media="store.getters.getNew"></CardCarousel>
+      <CardCarousel title="Top Ever" :media="store.getters.getFINDRMediaDemo"></CardCarousel>
+      <CardCarousel title="Not To Watch" :media="store.getters.getFINDRMediaDemo"></CardCarousel>
     </div>
   </div>
 </template>

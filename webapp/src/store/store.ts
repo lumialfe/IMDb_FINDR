@@ -1,6 +1,6 @@
 import {
     createStore,
-    Store
+    Store,
 } from "vuex";
 
 interface State {
@@ -10,46 +10,62 @@ interface State {
     FINDRMedia: Media[],
     results: Media[],
     trending: Media[],
+    new: Media[],
 }
 
-function fetchTrending(): Media[] {
+const movieTypes = ["short", "movie", "tvMovie", "tvShort"];
+const tvTypes = ["tvSeries", "tvMiniSeries", "tvSpecial"];
+
+async function fetchTrending(): Promise<Media[]> {
     let baseURL = "http://localhost:8080/imdb/_search/";
     let url = baseURL + "recommended" + "?year=" + (new Date().getFullYear() - 1) + "&size=20";
-    return fetchMedia(url);
+    return await fetchMedia(url);
 }
 
-function fetchNew() {
+async function fetchNew(): Promise<Media[]> {
     let baseURL = "http://localhost:8080/imdb/_search/";
-    let url = baseURL + "range" + "?from=" + (new Date().getFullYear() - 1) + "&size=20";
-    let res = fetchMedia(url);
+    let url = baseURL + "recommended" + "?year=" + (new Date().getFullYear()) + "&size=20";
+    return await fetchMedia(url);
 }
 
-function fetchMedia(url: string,): Media[] {
+async function fetchByTitle(query: string): Promise<Media[]> {
+    let baseURL = "http://localhost:8080/imdb/_search/";
+    let url = baseURL + "title" + "?title=" + query;
+    return await fetchMedia(url);
+}
+
+async function fetchMedia(url: string,): Promise<Media[]> {
     let ret: Media[] = [];
-    fetch(url).then((response) => response.json())
-        .then((data) => {
+    await fetch(url).then((response) => response.json())
+        .then(async (data) => {
             for (let media of data) {
                 let m: Media = {
                     id: media.tconst,
                     title: media.primaryTitle,
-                    genres: [],
+                    genres: media.genres,
                     averageRating: media.averageRating,
+                    type: media.titleType,
+                    startYear: media.startYear,
+                    isAdult: media.isAdult,
+                    directors: media.directors,
+                    starring: media.starring,
                 };
-                fetchMovieData(m);
+                await fetchMovieData(m);
                 ret.push(m);
             }
         }).catch((ex) => {
-        console.log(ex); // Log Exception on console.
-    });
+            console.log(ex); // Log Exception on console.
+        });
     return ret;
 }
 
-function fetchMovieData(media: Media) {
-    const baseURL = "https://api.themoviedb.org/3/movie/";
+async function fetchMovieData(media: Media) {
+    let baseURL = "https://api.themoviedb.org/3/";
+    movieTypes.includes(media.type as string) ? baseURL += "movie/" : baseURL += "tv/";
     const apiKEY = "89d117037278a5d054a427790b60933e";
     let url = baseURL + media.id + "?api_key=" + apiKEY;
 
-    fetch(url).then(response => response.json()).then(data => {
+    await fetch(url).then(response => response.json()).then(async data => {
         media.posterPath = "https://image.tmdb.org/t/p/w500" + data.poster_path;
         media.backdropPath = "https://image.tmdb.org/t/p/w500" + data.backdrop_path;
         media.genres = data.genres;
@@ -57,7 +73,7 @@ function fetchMovieData(media: Media) {
         media.averageRating = data.vote_average.toString().substring(0, 3);
         media.imdbLink = "https://www.imdb.com/title/" + data.imdb_id
 
-        fetch("https://api.themoviedb.org/3/movie/" + data.id + "/videos?api_key=" + apiKEY + "&language=en-US" + data.id).then(response => response.json()).then(data => {
+        await fetch("https://api.themoviedb.org/3/movie/" + data.id + "/videos?api_key=" + apiKEY + "&language=en-US" + data.id).then(response => response.json()).then(data => {
             for (let i = 0; i < data.results.length; i++) {
                 if (data.results[i].site === "YouTube" && data.results[i].name.toLowerCase().includes("trailer")) {
                     media.trailer = "https://www.youtube.com/embed/" + data.results[i].key;
@@ -126,6 +142,11 @@ function map(current: number, in_min: number, in_max: number, out_min: number, o
     return clamp(mapped, out_min, out_max);
 }
 
+let trendingMedia: Media[] = (await fetchTrending()).sort((n1, n2) => n2.averageRating - n1.averageRating);
+let newMedia: Media[] = await fetchNew();
+if (newMedia.length < 20) {
+    newMedia.sort((n1, n2) => n2.averageRating - n1.averageRating).push(...trendingMedia.sort((n1, n2) => n2.averageRating - n1.averageRating).slice(0, 20 - newMedia.length));
+}
 export const store: Store<State> = createStore({
     state: {
         FINDR: false,
@@ -134,6 +155,7 @@ export const store: Store<State> = createStore({
         FINDRMedia: [],
         results: [],
         trending: [],
+        new: [],
     },
 
     getters: {
@@ -141,9 +163,12 @@ export const store: Store<State> = createStore({
             return state.FINDR;
         },
         getTrending(state: State): Media[] {
-            console.log(fetchTrending());
-            state.trending = fetchTrending();
-            return fetchTrending();
+            state.trending = trendingMedia;
+            return state.trending;
+        },
+        getNew(state: State): Media[] {
+            state.new = newMedia;
+            return state.new;
         },
         getLikedMedia(state: State): Media[] {
             return state.likedMedia;
@@ -158,47 +183,6 @@ export const store: Store<State> = createStore({
             return state.results;
         },
         getFINDRMediaDemo(state: State): Media[] {
-            state.FINDRMedia.push({
-                id: "tt0111161",
-                title: "The Shawshank Redemption",
-                genres: ["Crime", "Drama"],
-                averageRating: 4.5,
-            });
-            state.FINDRMedia.push({
-                id: "tt0068646",
-                title: "The Godfather",
-                genres: ["Crime", "Drama"],
-                averageRating: 4.5,
-            });
-            state.FINDRMedia.push({
-                id: "tt0071562",
-                title: "The Godfather: Part II",
-                genres: ["Crime", "Drama"],
-                averageRating: 4.5,
-            });
-            state.FINDRMedia.push({
-                id: "tt0468569",
-                title: "The Dark Knight",
-                genres: ["Action", "Crime", "Drama", "Thriller"],
-                averageRating: 4.5,
-            });
-            state.FINDRMedia.push({
-                id: "tt0099674",
-                title: "The Godfather: Part III",
-                genres: ["Crime", "Drama"],
-                averageRating: 4.5,
-            });
-            state.FINDRMedia.push({
-                id: "tt1345836",
-                title: "The Dark Knight Rises",
-                genres: ["Action", "Crime", "Drama", "Thriller"],
-                averageRating: 4.5,
-            });
-
-            for (let media of state.FINDRMedia) {
-                fetchMovieData(media);
-            }
-
             return state.FINDRMedia
         }
     },
@@ -240,6 +224,42 @@ export const store: Store<State> = createStore({
             state.dislikedMedia = [];
             weightFINDRChoices(state.likedMedia, state.dislikedMedia);
         },
+        setTrending(state: State, trending: Media[]) {
+            state.trending = trending;
+        },
+        setNew(state: State, newMedia: Media[]) {
+            state.new = newMedia;
+        },
+        setResults(state: State, results: Media[]) {
+            state.results = results;
+        },
+    },
+    actions: {
+        async search({commit, rootGetters}): Promise<void> {
+            let results: Media[] = [];
+            let dropdown: HTMLSelectElement = (document.getElementById("media-type") as HTMLSelectElement);
+            let searchBar: HTMLInputElement = (document.getElementById("media-query") as HTMLInputElement);
+            if (dropdown && searchBar) {
+                let type: string = dropdown.value;
+                let query: string = searchBar.value;
+                if (query.length > 3) {
+                    //TODO: if all, show carousel of results, else show list
+                    if (type === "all") {
+                        console.log("searching " + type + ": " + query);
+
+                        let results: Media[] = (await fetchByTitle(query)).sort((n1, n2) => n2.averageRating - n1.averageRating);
+                        commit("setTrending", results.slice(0, 10));
+                    } else {
+                        console.log("searching " + type + ": " + query);
+
+                        let results: Media[] = await fetchByTitle(query);
+                        commit("setResults", results.sort((a, b) => b.averageRating - a.averageRating));
+                    }
+                } else {
+                    commit("setResults", []);
+                }
+            }
+        }
     },
 });
 
@@ -254,7 +274,7 @@ interface Media {
     backdropPath?: string,
     trailer?: string,
     imdbLink?: string,
-    type?: string,
+    type: string,
     runtimeMinutes?: number,
     isAdult?: boolean,
     startYear?: number,
