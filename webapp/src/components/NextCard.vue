@@ -10,7 +10,7 @@
       </div>
       <div class="info--rating">
         <span class="fa fa-star checked"></span>
-        {{ this.media.averageRating }}
+        {{ this.media.averageRating === -1 ? "N/A" : this.media.averageRating }}
       </div>
     </div>
   </div>

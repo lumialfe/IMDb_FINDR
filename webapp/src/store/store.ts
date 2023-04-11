@@ -39,11 +39,13 @@ async function fetchMedia(url: string,): Promise<Media[]> {
     await fetch(url).then((response) => response.json())
         .then(async (data) => {
             for (let media of data) {
+                let rating = data.vote_average;
+
                 let m: Media = {
                     id: media.tconst,
                     title: media.primaryTitle,
                     genres: media.genres,
-                    averageRating: media.averageRating,
+                    averageRating: rating === undefined ? -1 : rating.toString().substring(0, 3),
                     type: media.titleType,
                     startYear: media.startYear,
                     isAdult: media.isAdult,
@@ -70,7 +72,8 @@ async function fetchMovieData(media: Media) {
         media.backdropPath = "https://image.tmdb.org/t/p/w500" + data.backdrop_path;
         media.genres = data.genres;
         media.overview = data.overview;
-        media.averageRating = data.vote_average.toString().substring(0, 3);
+        let rating = data.vote_average
+        media.averageRating = rating === undefined ? media.averageRating : rating.toString().substring(0, 3);
         media.imdbLink = "https://www.imdb.com/title/" + data.imdb_id
 
         await fetch("https://api.themoviedb.org/3/movie/" + data.id + "/videos?api_key=" + apiKEY + "&language=en-US" + data.id).then(response => response.json()).then(data => {
@@ -130,6 +133,8 @@ function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, numb
         sortedWeights[key] = map(sortedWeights[key], min, max, 0, 1);
     });
 
+    console.log(sortedWeights);
+
     return sortedWeights;
 }
 
@@ -163,11 +168,9 @@ export const store: Store<State> = createStore({
             return state.FINDR;
         },
         getTrending(state: State): Media[] {
-            state.trending = trendingMedia;
             return state.trending;
         },
         getNew(state: State): Media[] {
-            state.new = newMedia;
             return state.new;
         },
         getLikedMedia(state: State): Media[] {
@@ -183,7 +186,7 @@ export const store: Store<State> = createStore({
             return state.results;
         },
         getFINDRMediaDemo(state: State): Media[] {
-            return state.FINDRMedia
+            return state.trending
         }
     },
     mutations: {
@@ -235,8 +238,11 @@ export const store: Store<State> = createStore({
         },
     },
     actions: {
+        load({commit}) {
+            commit("setTrending", trendingMedia);
+            commit("setNew", newMedia);
+        },
         async search({commit, rootGetters}): Promise<void> {
-            let results: Media[] = [];
             let dropdown: HTMLSelectElement = (document.getElementById("media-type") as HTMLSelectElement);
             let searchBar: HTMLInputElement = (document.getElementById("media-query") as HTMLInputElement);
             if (dropdown && searchBar) {
@@ -248,7 +254,7 @@ export const store: Store<State> = createStore({
                         console.log("searching " + type + ": " + query);
 
                         let results: Media[] = (await fetchByTitle(query)).sort((n1, n2) => n2.averageRating - n1.averageRating);
-                        commit("setTrending", results.slice(0, 10));
+                        commit("setResults", results.sort((a, b) => b.averageRating - a.averageRating));
                     } else {
                         console.log("searching " + type + ": " + query);
 
