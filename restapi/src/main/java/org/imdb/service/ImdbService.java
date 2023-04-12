@@ -34,6 +34,6 @@ public interface ImdbService {
     List<Movie> getMoviesFiltered(int minYear,
                                   int maxYear, int maxRuntimeMin,
                                   int minRuntimeMin, double minAvgRating,
-                                  double maxAvgRating, String[] type,
+                                  double maxAvgRating, String type,
                                   String[] genres);
 }

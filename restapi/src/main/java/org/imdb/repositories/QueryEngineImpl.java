@@ -62,12 +62,13 @@ public class QueryEngineImpl {
         List<Hit<Movie>> hits;
         try {
             hits = getQueryResult(40, query);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
             for(Hit<Movie> movie : hits){
                 movies.add(movie.source());
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         return movies;
     }
 
@@ -162,7 +163,7 @@ public class QueryEngineImpl {
     public List<Movie> getMoviesFiltered(int minYear,
                                          int maxYear, int maxRuntimeMin,
                                          int minRuntimeMin, double minAvgRating,
-                                         double maxAvgRating, String[] type,
+                                         double maxAvgRating, String type,
                                          String[] genres) {
         List<Movie> movies = new ArrayList<>();
         List<Query> queries = new ArrayList<>();
@@ -179,13 +180,27 @@ public class QueryEngineImpl {
             queries.add(getRanged("avgRating", minAvgRating,
                     maxAvgRating));
         }
-        if(type != null){
-            queries.add(getTypeAndGenreMovie("titleType", type));
+        if(filterByType(type) != null){
+            queries.add(filterByType(type));
         }
         if (genres != null) {
             queries.add(getTypeAndGenreMovie("genres",genres));
 
         }
+
+        Query query =
+                BoolQuery.of(q -> q.filter(queries))._toQuery();
+
+        List<Hit<Movie>> hits;
+        try{
+            hits = getQueryResult(25, query);
+            for (Hit<Movie> object : hits) {
+                movies.add(object.source());
+            }
+        }catch(IOException e){
+
+        }
+
         return movies;
     }
 

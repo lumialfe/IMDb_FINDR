@@ -50,7 +50,7 @@ public class QueryController {
         return ResponseEntity.ok(imdbService.getRecommended(year, size));
     }
 
-    /*
+
     @GetMapping("/_search")
     public ResponseEntity<List<Movie>> getMoviesFiltered(@RequestParam int minYear,
                                                          @RequestParam int maxYear,
@@ -58,13 +58,13 @@ public class QueryController {
                                                          @RequestParam int minRuntimeMin,
                                                          @RequestParam double minAvgRating,
                                                          @RequestParam double maxAvgRating,
-                                                         @RequestParam String[] type,
+                                                         @RequestParam String type,
                                                          @RequestParam String[] genres)
     {
 
         return ResponseEntity.ok(imdbService.getMoviesFiltered(minYear,
                 maxYear, maxRuntimeMin, minRuntimeMin, minAvgRating,
                 maxAvgRating, type, genres));
-    }*/
+    }
 
 }

@@ -107,7 +107,7 @@ public class ImdbServiceImpl implements ImdbService{
     public List<Movie> getMoviesFiltered(int minYear,
                                          int maxYear, int maxRuntimeMin,
                                          int minRuntimeMin, double minAvgRating,
-                                         double maxAvgRating, String[] type,
+                                         double maxAvgRating, String type,
                                          String[] genres) {
         return elasticsearchEngine.getMoviesFiltered(minYear,
                 maxYear, maxRuntimeMin, minRuntimeMin, minAvgRating,
