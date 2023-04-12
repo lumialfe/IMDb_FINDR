@@ -125,6 +125,18 @@ function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, numb
                 genreWeights.set(genre, 1);
             }
         }
+
+        // @ts-ignore
+        for (let director of media.directors) {
+            // @ts-ignore
+            if (directorWeights.has(director.nconst)) {
+                // @ts-ignore
+                directorWeights.set(genre, directorWeights.get(director.nconst) * 1); //Do not change it
+            } else {
+                // @ts-ignore
+                directorWeights.set(director.nconst, 1);
+            }
+        }
     }
 
     for (let media of disliked) {
@@ -138,21 +150,42 @@ function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, numb
                 genreWeights.set(genre, 0);
             }
         }
+
+        // @ts-ignore
+        for (let director of media.directors) {
+            // @ts-ignore
+            if (directorWeights.has(director.nconst)) {
+                // @ts-ignore
+                directorWeights.set(genre, directorWeights.get(director.nconst) * .5);
+            } else {
+                // @ts-ignore
+                directorWeights.set(director.nconst, 0);
+            }
+        }
     }
 
-    const sortedWeights = new Map([...genreWeights.entries()].sort((a, b) => b[1] - a[1]));
+    const sortedGenreWeights = new Map([...genreWeights.entries()].sort((a, b) => b[1] - a[1]));
+    const sortedDirectorWeights = new Map([...directorWeights.entries()].sort((a, b) => b[1] - a[1]));
 
-    let max = Math.max(...sortedWeights.values());
-    let min = Math.min(...sortedWeights.values());
+    let max = Math.max(...sortedGenreWeights.values());
+    let min = Math.min(...sortedGenreWeights.values());
 
-    Object.keys(sortedWeights).forEach(function (key) {
+    Object.keys(sortedGenreWeights).forEach(function (key) {
         // @ts-ignore
-        sortedWeights[key] = map(sortedWeights[key], min, max, 0, 1);
+        sortedGenreWeights[key] = map(sortedGenreWeights[key], min, max, 0, 1);
     });
 
-    console.log(sortedWeights);
+    max = Math.max(...sortedDirectorWeights.values());
+    min = Math.min(...sortedDirectorWeights.values());
 
-    return sortedWeights;
+    Object.keys(sortedDirectorWeights).forEach(function (key) {
+        // @ts-ignore
+        sortedDirectorWeights[key] = map(sortedDirectorWeights[key], min, max, 0, 1);
+    });
+
+    console.log(sortedDirectorWeights);
+
+    return sortedGenreWeights;
 }
 
 function clamp(input: number, min: number, max: number): number {
