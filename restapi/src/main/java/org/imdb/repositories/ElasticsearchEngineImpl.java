@@ -136,13 +136,26 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
     }
 
     @Override
-    public List<Movie> getMoviesByTitle(String title){
-        return new QueryEngineImpl(elasticSearchConfig.getElasticClient()).getMoviesByTitle(title);
+    public List<Movie> getMoviesByTitle(String title, String type){
+        return new QueryEngineImpl(elasticSearchConfig.getElasticClient())
+                .getMoviesByTitle(title, type);
     }
 
     @Override
     public List<Movie> getRecommended(int year, int size){
         return new QueryEngineImpl(elasticSearchConfig.getElasticClient())
                 .getRecommended(year, size);
+    }
+
+    @Override
+    public List<Movie> getMoviesFiltered(int minYear,
+                                         int maxYear, int maxRuntimeMin,
+                                         int minRuntimeMin, double minAvgRating,
+                                         double maxAvgRating, String[] type,
+                                         String[] genres) {
+        return new QueryEngineImpl(elasticSearchConfig.getElasticClient())
+                .getMoviesFiltered(minYear,
+                        maxYear, maxRuntimeMin, minRuntimeMin, minAvgRating,
+                        maxAvgRating, type, genres);
     }
 }

@@ -94,12 +94,23 @@ public class ImdbServiceImpl implements ImdbService{
     }
 
     @Override
-    public List<Movie> getMoviesByTitle(String title){
-        return elasticsearchEngine.getMoviesByTitle(title);
+    public List<Movie> getMoviesByTitle(String title, String type){
+        return elasticsearchEngine.getMoviesByTitle(title, type);
     }
 
     @Override
     public List<Movie> getRecommended(int year, int size){
         return elasticsearchEngine.getRecommended(year, size);
+    }
+
+    @Override
+    public List<Movie> getMoviesFiltered(int minYear,
+                                         int maxYear, int maxRuntimeMin,
+                                         int minRuntimeMin, double minAvgRating,
+                                         double maxAvgRating, String[] type,
+                                         String[] genres) {
+        return elasticsearchEngine.getMoviesFiltered(minYear,
+                maxYear, maxRuntimeMin, minRuntimeMin, minAvgRating,
+                maxAvgRating, type, genres);
     }
 }

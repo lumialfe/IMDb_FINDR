@@ -27,7 +27,13 @@ public interface ImdbService {
 
     List<Movie> getRangedMovies(int from, int size);
 
-    List<Movie> getMoviesByTitle(String title);
+    List<Movie> getMoviesByTitle(String title, String type);
 
     List<Movie> getRecommended(int year, int size);
+
+    List<Movie> getMoviesFiltered(int minYear,
+                                  int maxYear, int maxRuntimeMin,
+                                  int minRuntimeMin, double minAvgRating,
+                                  double maxAvgRating, String[] type,
+                                  String[] genres);
 }
