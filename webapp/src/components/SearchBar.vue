@@ -1,9 +1,9 @@
 <template>
   <div class="searchbar">
     <select class="searchbar--filters" id="media-type" v-on:input="store.dispatch('search')">
-      <option class="searchbar--filter" value="all">All</option>
-      <option class="searchbar--filter" value="movies">Movies</option>
-      <option class="searchbar--filter" value="series">Series</option>
+      <option class="searchbar--filter" value="ALL">All</option>
+      <option class="searchbar--filter" value="MOVIE">Movies</option>
+      <option class="searchbar--filter" value="EPISODE">Series</option>
     </select>
     <input class="searchbar--input" type="text" placeholder="Search IMDb..." autofocus id="media-query"
            v-on:input="store.dispatch('search')"/>

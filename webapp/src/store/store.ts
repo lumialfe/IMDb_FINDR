@@ -28,9 +28,9 @@ async function fetchNew(): Promise<Media[]> {
     return await fetchMedia(url);
 }
 
-async function fetchByTitle(query: string): Promise<Media[]> {
+async function fetchByTitle(query: string, type: string): Promise<Media[]> {
     let baseURL = "http://localhost:8080/imdb/_search/";
-    let url = baseURL + "title" + "?title=" + query;
+    let url = baseURL + "title" + "?title=" + query + "&type=" + type;
     return await fetchMedia(url);
 }
 
@@ -38,6 +38,8 @@ async function fetchMedia(url: string,): Promise<Media[]> {
     let ret: Media[] = [];
     await fetch(url).then((response) => response.json())
         .then(async (data) => {
+            console.log(data);
+
             for (let media of data) {
                 let rating = data.vote_average;
 
@@ -58,25 +60,37 @@ async function fetchMedia(url: string,): Promise<Media[]> {
         }).catch((ex) => {
             console.log(ex); // Log Exception on console.
         });
+
     return ret;
 }
 
 async function fetchMovieData(media: Media) {
-    let baseURL = "https://api.themoviedb.org/3/";
-    movieTypes.includes(media.type as string) ? baseURL += "movie/" : baseURL += "tv/";
+    let baseURL = "https://api.themoviedb.org/3/find/";
     const apiKEY = "89d117037278a5d054a427790b60933e";
-    let url = baseURL + media.id + "?api_key=" + apiKEY;
+    let url = baseURL + media.id + "?api_key=" + apiKEY + "&language=en-US&external_source=imdb_id";
 
     await fetch(url).then(response => response.json()).then(async data => {
+        console.log(data);
+
+        if (data.movie_results.length) {
+            data = data.movie_results[0];
+        } else if (data.tv_results.length) {
+            data = data.tv_results[0];
+        }
+
         media.posterPath = "https://image.tmdb.org/t/p/w500" + data.poster_path;
         media.backdropPath = "https://image.tmdb.org/t/p/w500" + data.backdrop_path;
-        media.genres = data.genres;
         media.overview = data.overview;
-        let rating = data.vote_average
-        media.averageRating = rating === undefined ? media.averageRating : rating.toString().substring(0, 3);
-        media.imdbLink = "https://www.imdb.com/title/" + data.imdb_id
+        if (media.averageRating === -1) {
+            let rating = data.vote_average;
+            media.averageRating = rating === undefined ? media.averageRating : rating.toString().substring(0, 3);
+        }
+        media.imdbLink = "https://www.imdb.com/title/" + media.id;
 
-        await fetch("https://api.themoviedb.org/3/movie/" + data.id + "/videos?api_key=" + apiKEY + "&language=en-US" + data.id).then(response => response.json()).then(data => {
+        let baseURL = "https://api.themoviedb.org/3/";
+        movieTypes.includes(media.type as string) ? baseURL += "movie/" : baseURL += "tv/";
+
+        await fetch(baseURL + data.id + "/videos?api_key=" + apiKEY + "&language=en-US" + data.id).then(response => response.json()).then(data => {
             for (let i = 0; i < data.results.length; i++) {
                 if (data.results[i].site === "YouTube" && data.results[i].name.toLowerCase().includes("trailer")) {
                     media.trailer = "https://www.youtube.com/embed/" + data.results[i].key;
@@ -242,7 +256,7 @@ export const store: Store<State> = createStore({
             commit("setTrending", trendingMedia);
             commit("setNew", newMedia);
         },
-        async search({commit, rootGetters}): Promise<void> {
+        async search({commit}): Promise<void> {
             let dropdown: HTMLSelectElement = (document.getElementById("media-type") as HTMLSelectElement);
             let searchBar: HTMLInputElement = (document.getElementById("media-query") as HTMLInputElement);
             if (dropdown && searchBar) {
@@ -250,17 +264,11 @@ export const store: Store<State> = createStore({
                 let query: string = searchBar.value;
                 if (query.length > 3) {
                     //TODO: if all, show carousel of results, else show list
-                    if (type === "all") {
-                        console.log("searching " + type + ": " + query);
 
-                        let results: Media[] = (await fetchByTitle(query)).sort((n1, n2) => n2.averageRating - n1.averageRating);
-                        commit("setResults", results.sort((a, b) => b.averageRating - a.averageRating));
-                    } else {
-                        console.log("searching " + type + ": " + query);
+                    console.log("searching " + type + ": " + query);
+                    let results: Media[] = await fetchByTitle(query, type);
+                    commit("setResults", results.sort((a, b) => b.averageRating - a.averageRating));
 
-                        let results: Media[] = await fetchByTitle(query);
-                        commit("setResults", results.sort((a, b) => b.averageRating - a.averageRating));
-                    }
                 } else {
                     commit("setResults", []);
                 }
