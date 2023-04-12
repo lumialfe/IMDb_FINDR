@@ -20,7 +20,7 @@
         <div class="card--info">
           <div class="card--title">{{ media.title }}</div>
           <div class="card--categories">
-            <span v-for="genre in media.genres">{{ genre.name }}</span>
+            <span v-for="genre in media.genres">{{ genre }}</span>
           </div>
           <div class="card--buttons">
             <button class="card--button" id="dislike" v-on:click="dislike"><i class="fa fa-times"

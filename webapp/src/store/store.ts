@@ -28,9 +28,9 @@ async function fetchNew(): Promise<Media[]> {
     return await fetchMedia(url);
 }
 
-async function fetchByTitle(query: string): Promise<Media[]> {
+async function fetchByTitle(query: string, type: string): Promise<Media[]> {
     let baseURL = "http://localhost:8080/imdb/_search/";
-    let url = baseURL + "title" + "?title=" + query;
+    let url = baseURL + "title" + "?title=" + query + "&type=" + type;
     return await fetchMedia(url);
 }
 
@@ -38,6 +38,8 @@ async function fetchMedia(url: string,): Promise<Media[]> {
     let ret: Media[] = [];
     await fetch(url).then((response) => response.json())
         .then(async (data) => {
+            console.log(data);
+
             for (let media of data) {
                 let rating = data.vote_average;
 
@@ -50,7 +52,7 @@ async function fetchMedia(url: string,): Promise<Media[]> {
                     startYear: media.startYear,
                     isAdult: media.isAdult,
                     directors: media.directors,
-                    starring: media.starring,
+                    starring: media.starrings,
                 };
                 await fetchMovieData(m);
                 ret.push(m);
@@ -58,25 +60,37 @@ async function fetchMedia(url: string,): Promise<Media[]> {
         }).catch((ex) => {
             console.log(ex); // Log Exception on console.
         });
+
     return ret;
 }
 
 async function fetchMovieData(media: Media) {
-    let baseURL = "https://api.themoviedb.org/3/";
-    movieTypes.includes(media.type as string) ? baseURL += "movie/" : baseURL += "tv/";
+    let baseURL = "https://api.themoviedb.org/3/find/";
     const apiKEY = "89d117037278a5d054a427790b60933e";
-    let url = baseURL + media.id + "?api_key=" + apiKEY;
+    let url = baseURL + media.id + "?api_key=" + apiKEY + "&language=en-US&external_source=imdb_id";
 
     await fetch(url).then(response => response.json()).then(async data => {
+        console.log(data);
+
+        if (data.movie_results.length) {
+            data = data.movie_results[0];
+        } else if (data.tv_results.length) {
+            data = data.tv_results[0];
+        }
+
         media.posterPath = "https://image.tmdb.org/t/p/w500" + data.poster_path;
         media.backdropPath = "https://image.tmdb.org/t/p/w500" + data.backdrop_path;
-        media.genres = data.genres;
         media.overview = data.overview;
-        let rating = data.vote_average
-        media.averageRating = rating === undefined ? media.averageRating : rating.toString().substring(0, 3);
-        media.imdbLink = "https://www.imdb.com/title/" + data.imdb_id
+        if (media.averageRating === -1) {
+            let rating = data.vote_average;
+            media.averageRating = rating === undefined ? media.averageRating : rating.toString().substring(0, 3);
+        }
+        media.imdbLink = "https://www.imdb.com/title/" + media.id;
 
-        await fetch("https://api.themoviedb.org/3/movie/" + data.id + "/videos?api_key=" + apiKEY + "&language=en-US" + data.id).then(response => response.json()).then(data => {
+        let baseURL = "https://api.themoviedb.org/3/";
+        movieTypes.includes(media.type as string) ? baseURL += "movie/" : baseURL += "tv/";
+
+        await fetch(baseURL + data.id + "/videos?api_key=" + apiKEY + "&language=en-US" + data.id).then(response => response.json()).then(data => {
             for (let i = 0; i < data.results.length; i++) {
                 if (data.results[i].site === "YouTube" && data.results[i].name.toLowerCase().includes("trailer")) {
                     media.trailer = "https://www.youtube.com/embed/" + data.results[i].key;
@@ -95,17 +109,20 @@ async function fetchMovieData(media: Media) {
 }
 
 function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number> {
-    let weights = new Map<string, number>();
+    let genreWeights = new Map<string, number>();
+    let typeWeights = new Map<string, number>();
+    let directorWeights = new Map<string, number>();
+    let starringWeights = new Map<string, number>();
 
     for (let media of liked) {
         for (let genre of media.genres) {
             // @ts-ignore
-            if (weights.has(genre.name)) {
+            if (genreWeights.has(genre)) {
                 // @ts-ignore
-                weights.set(genre.name, weights.get(genre.name) * 1); //Do not change it
+                genreWeights.set(genre, genreWeights.get(genre) * 1); //Do not change it
             } else {
                 // @ts-ignore
-                weights.set(genre.name, 1);
+                genreWeights.set(genre, 1);
             }
         }
     }
@@ -113,17 +130,17 @@ function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, numb
     for (let media of disliked) {
         for (let genre of media.genres) {
             // @ts-ignore
-            if (weights.has(genre.name)) {
+            if (genreWeights.has(genre)) {
                 // @ts-ignore
-                weights.set(genre.name, weights.get(genre.name) * .5);
+                genreWeights.set(genre, genreWeights.get(genre) * .5);
             } else {
                 // @ts-ignore
-                weights.set(genre.name, 0);
+                genreWeights.set(genre, 0);
             }
         }
     }
 
-    const sortedWeights = new Map([...weights.entries()].sort((a, b) => b[1] - a[1]));
+    const sortedWeights = new Map([...genreWeights.entries()].sort((a, b) => b[1] - a[1]));
 
     let max = Math.max(...sortedWeights.values());
     let min = Math.min(...sortedWeights.values());
@@ -242,7 +259,7 @@ export const store: Store<State> = createStore({
             commit("setTrending", trendingMedia);
             commit("setNew", newMedia);
         },
-        async search({commit, rootGetters}): Promise<void> {
+        async search({commit}): Promise<void> {
             let dropdown: HTMLSelectElement = (document.getElementById("media-type") as HTMLSelectElement);
             let searchBar: HTMLInputElement = (document.getElementById("media-query") as HTMLInputElement);
             if (dropdown && searchBar) {
@@ -250,17 +267,12 @@ export const store: Store<State> = createStore({
                 let query: string = searchBar.value;
                 if (query.length > 3) {
                     //TODO: if all, show carousel of results, else show list
-                    if (type === "all") {
-                        console.log("searching " + type + ": " + query);
 
-                        let results: Media[] = (await fetchByTitle(query)).sort((n1, n2) => n2.averageRating - n1.averageRating);
-                        commit("setResults", results.sort((a, b) => b.averageRating - a.averageRating));
-                    } else {
-                        console.log("searching " + type + ": " + query);
+                    console.log("searching " + type + ": " + query);
+                    let results: Media[] = await fetchByTitle(query, type);
+                    // @ts-ignore
+                    commit("setResults", results.sort((a, b) => similar(query, b.title) - similar(query, a.title)));
 
-                        let results: Media[] = await fetchByTitle(query);
-                        commit("setResults", results.sort((a, b) => b.averageRating - a.averageRating));
-                    }
                 } else {
                     commit("setResults", []);
                 }
@@ -269,6 +281,21 @@ export const store: Store<State> = createStore({
     },
 });
 
+function similar(a: string, b: string): number {
+    a = a.toLowerCase();
+    b = b.toLowerCase();
+    let equivalency = 0;
+    let minLength = (a.length > b.length) ? b.length : a.length;
+    let maxLength = (a.length < b.length) ? b.length : a.length;
+    for (let i = 0; i < minLength; i++) {
+        if (a[i] == b[i]) {
+            equivalency++;
+        }
+    }
+
+    let weight = equivalency / maxLength;
+    return (weight * 100);
+}
 
 interface Media {
     id: string,
