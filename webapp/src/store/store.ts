@@ -52,7 +52,7 @@ async function fetchMedia(url: string,): Promise<Media[]> {
                     startYear: media.startYear,
                     isAdult: media.isAdult,
                     directors: media.directors,
-                    starring: media.starring,
+                    starring: media.starrings,
                 };
                 await fetchMovieData(m);
                 ret.push(m);
@@ -109,17 +109,20 @@ async function fetchMovieData(media: Media) {
 }
 
 function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number> {
-    let weights = new Map<string, number>();
+    let genreWeights = new Map<string, number>();
+    let typeWeights = new Map<string, number>();
+    let directorWeights = new Map<string, number>();
+    let starringWeights = new Map<string, number>();
 
     for (let media of liked) {
         for (let genre of media.genres) {
             // @ts-ignore
-            if (weights.has(genre.name)) {
+            if (genreWeights.has(genre)) {
                 // @ts-ignore
-                weights.set(genre.name, weights.get(genre.name) * 1); //Do not change it
+                genreWeights.set(genre, genreWeights.get(genre) * 1); //Do not change it
             } else {
                 // @ts-ignore
-                weights.set(genre.name, 1);
+                genreWeights.set(genre, 1);
             }
         }
     }
@@ -127,17 +130,17 @@ function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, numb
     for (let media of disliked) {
         for (let genre of media.genres) {
             // @ts-ignore
-            if (weights.has(genre.name)) {
+            if (genreWeights.has(genre)) {
                 // @ts-ignore
-                weights.set(genre.name, weights.get(genre.name) * .5);
+                genreWeights.set(genre, genreWeights.get(genre) * .5);
             } else {
                 // @ts-ignore
-                weights.set(genre.name, 0);
+                genreWeights.set(genre, 0);
             }
         }
     }
 
-    const sortedWeights = new Map([...weights.entries()].sort((a, b) => b[1] - a[1]));
+    const sortedWeights = new Map([...genreWeights.entries()].sort((a, b) => b[1] - a[1]));
 
     let max = Math.max(...sortedWeights.values());
     let min = Math.min(...sortedWeights.values());
@@ -268,7 +271,7 @@ export const store: Store<State> = createStore({
                     console.log("searching " + type + ": " + query);
                     let results: Media[] = await fetchByTitle(query, type);
                     // @ts-ignore
-                    commit("setResults", results.sort((a, b) => similar(query, a.title) - similar(query, b.title)));
+                    commit("setResults", results.sort((a, b) => similar(query, b.title) - similar(query, a.title)));
 
                 } else {
                     commit("setResults", []);
@@ -278,7 +281,9 @@ export const store: Store<State> = createStore({
     },
 });
 
-function similar(a: string, b: string) {
+function similar(a: string, b: string): number {
+    a = a.toLowerCase();
+    b = b.toLowerCase();
     let equivalency = 0;
     let minLength = (a.length > b.length) ? b.length : a.length;
     let maxLength = (a.length < b.length) ? b.length : a.length;
@@ -288,8 +293,8 @@ function similar(a: string, b: string) {
         }
     }
 
-    var weight = equivalency / maxLength;
-    return (weight * 100) + "%";
+    let weight = equivalency / maxLength;
+    return (weight * 100);
 }
 
 interface Media {
