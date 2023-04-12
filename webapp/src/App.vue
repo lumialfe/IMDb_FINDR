@@ -13,6 +13,9 @@ export default defineComponent({
       return store
     }
   },
+  created() {
+    this.store.dispatch("load");
+  },
   components: {MainPage, FINDR_Div, Footer, Header, BottomSheet},
 });
 </script>

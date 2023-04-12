@@ -1,18 +1,25 @@
 <template>
   <div class="searchbar">
-    <select class="searchbar--filters">
+    <select class="searchbar--filters" id="media-type" v-on:input="store.dispatch('search')">
       <option class="searchbar--filter" value="all">All</option>
       <option class="searchbar--filter" value="movies">Movies</option>
-      <option class="searchbar--filter" value="episodes">Episodes</option>
+      <option class="searchbar--filter" value="series">Series</option>
     </select>
-    <input class="searchbar--input" type="text" placeholder="Search IMDb..." autofocus
-           v-on:input="$emit('search',$event.target.value)"/>
+    <input class="searchbar--input" type="text" placeholder="Search IMDb..." autofocus id="media-query"
+           v-on:input="store.dispatch('search')"/>
   </div>
 </template>
 
 <script lang="ts">
+import {store} from "@/store/store";
+
 export default {
-  name: "SearchBar"
+  name: "SearchBar",
+  computed: {
+    store() {
+      return store
+    }
+  }
 }
 </script>
 

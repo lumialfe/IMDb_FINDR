@@ -8,7 +8,7 @@
       <div class="carousel--scroll-panel" id="scroll" ref="scroll">
         <div class="carousel--cards">
           <div v-for="mediaItem in media" class="carousel--card">
-            <MovieCard :media="mediaItem"></MovieCard>
+            <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
           </div>
         </div>
       </div>
@@ -22,8 +22,14 @@
 <script lang="ts">
 import MovieCard from "@/components/MovieCard.vue";
 import {defineComponent} from "vue";
+import {store} from "@/store/store";
 
 export default defineComponent({
+  computed: {
+    store() {
+      return store
+    }
+  },
   components: {MovieCard},
   props: ["title", "media"],
   methods: {
@@ -36,7 +42,7 @@ export default defineComponent({
         divContent.scrollLeft += 242;
       }
     },
-  }
+  },
 });
 </script>
 

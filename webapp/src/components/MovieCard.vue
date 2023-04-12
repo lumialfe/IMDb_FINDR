@@ -1,6 +1,6 @@
 <template>
   <div class="movie-card">
-    <img loading="lazy" v-if="this.media.posterPath == null" src="../../assets/media/missing_img.jpeg"
+    <img loading="lazy" v-if="this.media.posterPath.includes('undefined')" src="../assets/media/missing_img.jpeg"
          alt="Card image"
          class="movie-card--image"/>
     <img loading="lazy" v-else v-bind:src="this.media.posterPath"
@@ -12,10 +12,10 @@
       </div>
       <div class="info--rating">
         <span class="fa fa-star checked"></span>
-        {{ this.media.averageRating }}
+        {{ this.media.averageRating === -1 ? "N/A" : this.media.averageRating }}
       </div>
       <div class="info--trailer">
-        <a class="button-link" target="_blank">
+        <a class="button-link" target="_blank" v-bind:href="media.trailer">
           <button class="info--trailer-button">
             Trailer <span class="fa fa-play"></span>
           </button>
@@ -26,9 +26,19 @@
 </template>
 
 <script>
+import {store} from "@/store/store";
+
 export default {
+  computed: {
+    store() {
+      return store
+    }
+  },
   props: ["media"],
   name: "MovieCard",
+  mounted() {
+    console.log(this.media);
+  }
 }
 </script>
 
