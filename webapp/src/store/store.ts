@@ -267,7 +267,8 @@ export const store: Store<State> = createStore({
 
                     console.log("searching " + type + ": " + query);
                     let results: Media[] = await fetchByTitle(query, type);
-                    commit("setResults", results.sort((a, b) => b.averageRating - a.averageRating));
+                    // @ts-ignore
+                    commit("setResults", results.sort((a, b) => similar(query, a.title) - similar(query, b.title)));
 
                 } else {
                     commit("setResults", []);
@@ -277,6 +278,19 @@ export const store: Store<State> = createStore({
     },
 });
 
+function similar(a: string, b: string) {
+    let equivalency = 0;
+    let minLength = (a.length > b.length) ? b.length : a.length;
+    let maxLength = (a.length < b.length) ? b.length : a.length;
+    for (let i = 0; i < minLength; i++) {
+        if (a[i] == b[i]) {
+            equivalency++;
+        }
+    }
+
+    var weight = equivalency / maxLength;
+    return (weight * 100) + "%";
+}
 
 interface Media {
     id: string,
