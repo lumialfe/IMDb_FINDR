@@ -2,12 +2,12 @@
   <footer>
     <div class="footer--content">
       <div class="footer--content--divider">
-        <a href="https://github.com/lumialfe/IMDB-Demo">GitHub Repository</a>
-        <a href="https://www.imdb.com/">IMDb</a>
+        <a target="_blank" href="https://github.com/lumialfe/IMDb_FINDR">GitHub Repository</a>
+        <a target="_blank" href="https://www.imdb.com/">IMDb</a>
       </div>
       <div class="footer--content--divider">
-        <a href="https://empathy.co">Empathy.co</a>
-        <a href="https://empathy.co/company/academy/">Academy Program</a>
+        <a target="_blank" href="https://empathy.co">Empathy.co</a>
+        <a target="_blank" href="https://empathy.co/company/academy/">Academy Program</a>
       </div>
     </div>
   </footer>
