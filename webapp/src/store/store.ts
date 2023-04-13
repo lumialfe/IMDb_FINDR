@@ -30,6 +30,7 @@ async function fetchTopAllTime(): Promise<Media[]> {
     return await fetchMedia(url);
 }
 
+//TODO: Not showing the correct results
 async function fetchNotToWatch(): Promise<Media[]> {
     let baseURL = "http://localhost:8080/imdb/_search/not-to-watch";
     let url = baseURL;
@@ -401,7 +402,8 @@ export const store: Store<State> = createStore({
                     let results: Media[] = await fetchByTitle(query, type);
                     // @ts-ignore
                     //commit("setResults", results.sort((a, b) => similar(query, b.title) - similar(query, a.title)));
-                    commit("setResults", results.sort((a, b) => b.startYear - a.startYear));
+                    //commit("setResults", results.sort((a, b) => b.startYear - a.startYear));
+                    commit("setResults", results);
 
                 } else {
                     commit("setResults", []);
