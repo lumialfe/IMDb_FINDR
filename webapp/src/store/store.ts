@@ -304,7 +304,8 @@ export const store: Store<State> = createStore({
                     console.log("searching " + type + ": " + query);
                     let results: Media[] = await fetchByTitle(query, type);
                     // @ts-ignore
-                    commit("setResults", results.sort((a, b) => similar(query, b.title) - similar(query, a.title)));
+                    //commit("setResults", results.sort((a, b) => similar(query, b.title) - similar(query, a.title)));
+                    commit("setResults", results.sort((a, b) => b.startYear - a.startYear));
 
                 } else {
                     commit("setResults", []);
