@@ -108,7 +108,7 @@ async function fetchMovieData(media: Media) {
     });
 }
 
-function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number> {
+function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number>[] {
     let genreWeights = new Map<string, number>();
     let typeWeights = new Map<string, number>();
     let directorWeights = new Map<string, number>();
@@ -131,12 +131,39 @@ function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, numb
             // @ts-ignore
             if (directorWeights.has(director.nconst)) {
                 // @ts-ignore
-                directorWeights.set(genre, directorWeights.get(director.nconst) * 1); //Do not change it
+                directorWeights.set(director.nconst, directorWeights.get(director.nconst) * 1); //Do not change it
             } else {
                 // @ts-ignore
                 directorWeights.set(director.nconst, 1);
             }
         }
+
+        // @ts-ignore
+        let actor = media.starring[0];            // @ts-ignore
+        // @ts-ignore
+        if (media.starring?.indexOf(actor) > 1) {
+            break;
+        }
+        // @ts-ignore
+        if (starringWeights.has(actor.name.nconst)) {
+            // @ts-ignore
+            starringWeights.set(actor.name.nconst, starringWeights.get(actor.name.nconst) * 1); //Do not change it
+        } else {
+            // @ts-ignore
+            starringWeights.set(actor.name.nconst, 1);
+        }
+
+
+        let type = media.type;
+        // @ts-ignore
+        if (typeWeights.has(type)) {
+            // @ts-ignore
+            typeWeights.set(type, typeWeights.get(type) * 1); //Do not change it
+        } else {
+            // @ts-ignore
+            typeWeights.set(type, 1);
+        }
+
     }
 
     for (let media of disliked) {
@@ -162,10 +189,34 @@ function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, numb
                 directorWeights.set(director.nconst, 0);
             }
         }
+
+        // @ts-ignore
+        let actor = media.starring[0];            // @ts-ignore
+        // @ts-ignore
+        if (starringWeights.has(actor.name.nconst)) {
+            // @ts-ignore
+            starringWeights.set(actor.name.nconst, starringWeights.get(actor.name.nconst) * .5); //Do not change it
+        } else {
+            // @ts-ignore
+            starringWeights.set(actor.name.nconst, 0);
+        }
+
+
+        let type = media.type;
+        // @ts-ignore
+        if (typeWeights.has(type)) {
+            // @ts-ignore
+            typeWeights.set(type, typeWeights.get(type) * .9); //Do not change it
+        } else {
+            // @ts-ignore
+            typeWeights.set(type, .5);
+        }
     }
 
     const sortedGenreWeights = new Map([...genreWeights.entries()].sort((a, b) => b[1] - a[1]));
     const sortedDirectorWeights = new Map([...directorWeights.entries()].sort((a, b) => b[1] - a[1]));
+    const sortedStarringWeights = new Map([...starringWeights.entries()].sort((a, b) => b[1] - a[1]));
+    const sortedTypeWeights = new Map([...typeWeights.entries()].sort((a, b) => b[1] - a[1]));
 
     let max = Math.max(...sortedGenreWeights.values());
     let min = Math.min(...sortedGenreWeights.values());
@@ -183,9 +234,25 @@ function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, numb
         sortedDirectorWeights[key] = map(sortedDirectorWeights[key], min, max, 0, 1);
     });
 
-    console.log(sortedDirectorWeights);
+    max = Math.max(...sortedStarringWeights.values());
+    min = Math.min(...sortedStarringWeights.values());
 
-    return sortedGenreWeights;
+    Object.keys(sortedStarringWeights).forEach(function (key) {
+        // @ts-ignore
+        sortedStarringWeights[key] = map(sortedStarringWeights[key], min, max, 0, 1);
+    });
+
+    max = Math.max(...sortedTypeWeights.values());
+    min = Math.min(...sortedTypeWeights.values());
+
+    Object.keys(sortedTypeWeights).forEach(function (key) {
+        // @ts-ignore
+        sortedTypeWeights[key] = map(sortedTypeWeights[key], min, max, 0, 1);
+    });
+
+    console.log([sortedGenreWeights, sortedDirectorWeights, sortedStarringWeights, sortedTypeWeights]);
+
+    return [sortedGenreWeights, sortedDirectorWeights, sortedStarringWeights, sortedTypeWeights];
 }
 
 function clamp(input: number, min: number, max: number): number {
