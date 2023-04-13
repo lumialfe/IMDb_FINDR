@@ -113,4 +113,14 @@ public class ImdbServiceImpl implements ImdbService{
                 maxYear, maxRuntimeMin, minRuntimeMin, minAvgRating,
                 maxAvgRating, type, genres);
     }
+
+    @Override
+    public List<Movie> getNotToWatchMovies() {
+        return elasticsearchEngine.getNotToWatchMovies();
+    }
+
+    @Override
+    public List<Movie> getAllTimesRecommended() {
+        return elasticsearchEngine.getAllTimesRecommended();
+    }
 }

@@ -158,4 +158,16 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
                         maxYear, maxRuntimeMin, minRuntimeMin, minAvgRating,
                         maxAvgRating, type, genres);
     }
+
+    @Override
+    public List<Movie> getNotToWatchMovies() {
+        return new QueryEngineImpl(elasticSearchConfig.getElasticClient())
+                .getNotToWatchMovies();
+    }
+
+    @Override
+    public List<Movie> getAllTimesRecommended() {
+        return new QueryEngineImpl(elasticSearchConfig.getElasticClient())
+                .getAllTimesRecommended();
+    }
 }

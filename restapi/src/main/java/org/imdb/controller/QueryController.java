@@ -33,7 +33,7 @@ public class QueryController {
     }
 
     @Operation(description = "Returns the movies found that match part of the" +
-            " title")
+            " title and correspond to the applied filter")
     @GetMapping("/_search/title")
     public ResponseEntity<List<Movie>> getMoviesByTitle(@Parameter(description =
             "Text to search for the movie", required = true)@RequestParam String title,
@@ -59,12 +59,22 @@ public class QueryController {
                                                          @RequestParam double minAvgRating,
                                                          @RequestParam double maxAvgRating,
                                                          @RequestParam String type,
-                                                         @RequestParam String[] genres)
+                                                         @RequestParam String[] genres
+                                                         )
     {
-
         return ResponseEntity.ok(imdbService.getMoviesFiltered(minYear,
                 maxYear, maxRuntimeMin, minRuntimeMin, minAvgRating,
                 maxAvgRating, type, genres));
+    }
+
+    @GetMapping("/_search/not-to-watch")
+    public ResponseEntity<List<Movie>> getNotToWatchMovies(){
+        return ResponseEntity.ok(imdbService.getNotToWatchMovies());
+    }
+
+    @GetMapping("_search/recommended-all-times")
+    public ResponseEntity<List<Movie>> getAllTimesRecommended(){
+        return ResponseEntity.ok(imdbService.getAllTimesRecommended());
     }
 
 }
