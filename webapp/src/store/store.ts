@@ -11,6 +11,8 @@ interface State {
     results: Media[],
     trending: Media[],
     new: Media[],
+    topAllTime: Media[],
+    notToWatch: Media[],
 }
 
 const movieTypes = ["short", "movie", "tvMovie", "tvShort"];
@@ -19,6 +21,18 @@ const tvTypes = ["tvSeries", "tvMiniSeries", "tvSpecial"];
 async function fetchTrending(): Promise<Media[]> {
     let baseURL = "http://localhost:8080/imdb/_search/";
     let url = baseURL + "recommended" + "?year=" + (new Date().getFullYear() - 1) + "&size=20";
+    return await fetchMedia(url);
+}
+
+async function fetchTopAllTime(): Promise<Media[]> {
+    let baseURL = "http://localhost:8080/imdb/_search/recommended-all-times";
+    let url = baseURL;
+    return await fetchMedia(url);
+}
+
+async function fetchNotToWatch(): Promise<Media[]> {
+    let baseURL = "http://localhost:8080/imdb/_search/not-to-watch";
+    let url = baseURL;
     return await fetchMedia(url);
 }
 
@@ -273,6 +287,8 @@ let newMedia: Media[] = await fetchNew();
 if (newMedia.length < 20) {
     newMedia.sort((n1, n2) => n2.averageRating - n1.averageRating).push(...trendingMedia.sort((n1, n2) => n2.averageRating - n1.averageRating).slice(0, 20 - newMedia.length));
 }
+let topAllTimeMedia: Media[] = await fetchTopAllTime();
+let notToWatchMedia: Media[] = await fetchNotToWatch();
 export const store: Store<State> = createStore({
     state: {
         FINDR: false,
@@ -282,6 +298,8 @@ export const store: Store<State> = createStore({
         results: [],
         trending: [],
         new: [],
+        topAllTime: [],
+        notToWatch: [],
     },
 
     getters: {
@@ -308,6 +326,12 @@ export const store: Store<State> = createStore({
         },
         getFINDRMediaDemo(state: State): Media[] {
             return state.trending
+        },
+        getTopAllTime(state: State): Media[] {
+            return state.topAllTime;
+        },
+        getNotToWatch(state: State): Media[] {
+            return state.notToWatch;
         }
     },
     mutations: {
@@ -350,11 +374,19 @@ export const store: Store<State> = createStore({
         setResults(state: State, results: Media[]) {
             state.results = results;
         },
+        setTopAllTime(state: State, topAllTime: Media[]) {
+            state.topAllTime = topAllTime;
+        },
+        setNotToWatch(state: State, notToWatch: Media[]) {
+            state.notToWatch = notToWatch;
+        }
     },
     actions: {
         load({commit}) {
             commit("setTrending", trendingMedia);
             commit("setNew", newMedia);
+            commit("setTopAllTime", topAllTimeMedia);
+            commit("setNotToWatch", notToWatchMedia);
         },
         async search({commit}): Promise<void> {
             let dropdown: HTMLSelectElement = (document.getElementById("media-type") as HTMLSelectElement);
@@ -382,7 +414,7 @@ export const store: Store<State> = createStore({
             let weights = weightFINDRChoices(state.likedMedia, state.dislikedMedia);
 
             // @ts-ignore
-            commit("setResults", results.sort((a, b) => b.startYear - a.startYear));
+            commit("setResults", results);
             console.log(results);
             return results;
         }

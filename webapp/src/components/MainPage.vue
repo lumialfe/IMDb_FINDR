@@ -18,12 +18,12 @@
           <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
         </div>
       </CardCarousel>
-      <CardCarousel title="Top Ever" :media="store.getters.getFINDRMediaDemo" v-slot="slotProps">
+      <CardCarousel title="Top Ever" :media="store.getters.getTopAllTime" v-slot="slotProps">
         <div v-for="mediaItem in slotProps.media" class="carousel--card">
           <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
         </div>
       </CardCarousel>
-      <CardCarousel title="Not To Watch" :media="store.getters.getFINDRMediaDemo" v-slot="slotProps">
+      <CardCarousel title="Not To Watch" :media="store.getters.getNotToWatch" v-slot="slotProps">
         <div v-for="mediaItem in slotProps.media" class="carousel--card">
           <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
         </div>
