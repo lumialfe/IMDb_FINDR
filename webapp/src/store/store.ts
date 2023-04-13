@@ -38,8 +38,6 @@ async function fetchMedia(url: string,): Promise<Media[]> {
     let ret: Media[] = [];
     await fetch(url).then((response) => response.json())
         .then(async (data) => {
-            console.log(data);
-
             for (let media of data) {
                 let rating = data.vote_average;
 
@@ -70,8 +68,6 @@ async function fetchMovieData(media: Media) {
     let url = baseURL + media.id + "?api_key=" + apiKEY + "&language=en-US&external_source=imdb_id";
 
     await fetch(url).then(response => response.json()).then(async data => {
-        console.log(data);
-
         if (data.movie_results.length) {
             data = data.movie_results[0];
         } else if (data.tv_results.length) {
@@ -315,34 +311,27 @@ export const store: Store<State> = createStore({
         },
         addLikedMedia(state: State, media: Media) {
             state.likedMedia.push(media);
-            weightFINDRChoices(state.likedMedia, state.dislikedMedia);
         },
         removeLikedMedia(state: State, media: Media) {
             const index = state.likedMedia.indexOf(media);
             if (index > -1) { // only splice array when item is found
                 state.likedMedia.splice(index, 1); // 2nd parameter means remove one item only
             }
-            console.log(weightFINDRChoices(state.likedMedia, state.dislikedMedia));
         },
         setLikedMedia(state: State, media: Media[]) {
             state.likedMedia = media;
-            weightFINDRChoices(state.likedMedia, state.dislikedMedia);
         },
         clearLikedMedia(state: State) {
             state.likedMedia = [];
-            weightFINDRChoices(state.likedMedia, state.dislikedMedia);
         },
         addDislikedMedia(state: State, media: Media) {
             state.dislikedMedia.push(media);
-            weightFINDRChoices(state.likedMedia, state.dislikedMedia);
         },
         setDislikedMedia(state: State, media: Media[]) {
             state.dislikedMedia = media;
-            weightFINDRChoices(state.likedMedia, state.dislikedMedia);
         },
         clearDislikedMedia(state: State) {
             state.dislikedMedia = [];
-            weightFINDRChoices(state.likedMedia, state.dislikedMedia);
         },
         setTrending(state: State, trending: Media[]) {
             state.trending = trending;
@@ -378,6 +367,16 @@ export const store: Store<State> = createStore({
                     commit("setResults", []);
                 }
             }
+        },
+        async updateFINDRResults({commit, state}): Promise<Media[]> {
+            let results: Media[] = [];
+            // Calculate weights for each media type
+            let weights = weightFINDRChoices(state.likedMedia, state.dislikedMedia);
+
+            // @ts-ignore
+            commit("setResults", results.sort((a, b) => b.startYear - a.startYear));
+            console.log(results);
+            return results;
         }
     },
 });

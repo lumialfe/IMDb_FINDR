@@ -20,7 +20,8 @@
         <div class="card--info">
           <div class="card--title">{{ media.title }}</div>
           <div class="card--categories">
-            <span v-for="genre in media.genres">{{ genre }}</span>
+            <span>{{ media.type.toUpperCase()}} </span>
+            <span v-for="genre in media.genres"> {{ genre }}</span>
           </div>
           <div class="card--buttons">
             <button class="card--button" id="dislike" v-on:click="dislike"><i class="fa fa-times"
@@ -73,6 +74,11 @@ export default defineComponent({
       this.isShowing = false;
       store.commit("addDislikedMedia", this.media);
       this.parent.next();
+    },
+    toCamelCase(str: string) {
+      return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
+        return index === 0 ? word.toUpperCase() : word.toLowerCase();
+      }).replace(/\s+/g, '');
     },
   },
 });
