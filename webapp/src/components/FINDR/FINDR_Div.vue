@@ -39,7 +39,8 @@ export default {
 .main--FINDR {
   background-color: $main-color;
   border-radius: 1rem;
-  height: 50%;
+  height: fit-content;
+  padding-bottom: 5%;
 
   h2 {
     margin-left: 3rem;

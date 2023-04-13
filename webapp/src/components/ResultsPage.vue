@@ -1,6 +1,8 @@
 <template>
   <div class="results-page">
-    <MovieCard v-for="media in media" :media="media"/>
+    <TransitionGroup name="list">
+      <MovieCard v-for="media in media" :media="media"/>
+    </TransitionGroup>
   </div>
 </template>
 
@@ -21,5 +23,16 @@ export default {
   grid-gap: 1vh 1vw;
   width: 60vw;
   margin: auto;
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(100%);
 }
 </style>

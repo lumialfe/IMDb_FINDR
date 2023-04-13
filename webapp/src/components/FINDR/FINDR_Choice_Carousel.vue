@@ -90,14 +90,10 @@ export default defineComponent({
     }
 
     .carousel--cards {
-      min-width: 60vw;
       display: flex;
       flex-flow: row nowrap;
       gap: 1rem;
-
-      .carousel--card {
-        min-width: 12rem;
-      }
+      margin: 0;
     }
   }
 }

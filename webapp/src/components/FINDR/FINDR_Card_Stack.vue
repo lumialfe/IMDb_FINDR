@@ -6,6 +6,7 @@
 
 <script>
 import FINDR_Card from "@/components/FINDR/FINDR_Card.vue";
+import {store} from "@/store/store";
 
 export default {
   data() {
@@ -19,7 +20,7 @@ export default {
   methods: {
     next() {
       this.current++;
-      console.log(this.current);
+      store.dispatch("updateFINDRResults");
     },
   },
 };

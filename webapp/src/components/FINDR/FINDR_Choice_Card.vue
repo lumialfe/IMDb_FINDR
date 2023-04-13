@@ -30,9 +30,14 @@ export default {
 @import "../../assets/styles/styles.scss";
 
 .FINDR-choice {
+  margin: 0;
   display: grid;
   grid-template-rows: 90% 10%;
   background-color: $main-color;
+
+  img {
+    width: 100%;
+  }
 
   .FINDR-choice--content {
     .FINDR-choice--content--text {
