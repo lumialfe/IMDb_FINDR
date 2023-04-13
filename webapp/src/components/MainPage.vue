@@ -8,10 +8,26 @@
     <div v-else class="main--main--main>">
       <MainRecommended :media="store.getters.getTrending.slice(0, 4)"></MainRecommended>
 
-      <CardCarousel title="Trending Now" :media="store.getters.getTrending"></CardCarousel>
-      <CardCarousel title="Top New Releases" :media="store.getters.getNew"></CardCarousel>
-      <CardCarousel title="Top Ever" :media="store.getters.getFINDRMediaDemo"></CardCarousel>
-      <CardCarousel title="Not To Watch" :media="store.getters.getFINDRMediaDemo"></CardCarousel>
+      <CardCarousel title="Trending Now" :media="store.getters.getTrending" v-slot="slotProps">
+        <div v-for="mediaItem in slotProps.media" class="carousel--card">
+          <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
+        </div>
+      </CardCarousel>
+      <CardCarousel title="Top New Releases" :media="store.getters.getNew" v-slot="slotProps">
+        <div v-for="mediaItem in slotProps.media" class="carousel--card">
+          <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
+        </div>
+      </CardCarousel>
+      <CardCarousel title="Top Ever" :media="store.getters.getFINDRMediaDemo" v-slot="slotProps">
+        <div v-for="mediaItem in slotProps.media" class="carousel--card">
+          <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
+        </div>
+      </CardCarousel>
+      <CardCarousel title="Not To Watch" :media="store.getters.getFINDRMediaDemo" v-slot="slotProps">
+        <div v-for="mediaItem in slotProps.media" class="carousel--card">
+          <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
+        </div>
+      </CardCarousel>
     </div>
   </div>
 </template>
@@ -22,10 +38,11 @@ import CardCarousel from "./CardCarousel.vue";
 import ResultsPage from "@/components/ResultsPage.vue";
 import MainRecommended from "@/components/MainRecommended.vue";
 import FINDR_Choice_Carousel from "@/components/FINDR/FINDR_Choice_Carousel.vue";
+import MovieCard from "@/components/MovieCard.vue";
 
 export default {
   name: "MainPage",
-  components: {FINDR_Choice_Carousel, MainRecommended, ResultsPage, CardCarousel},
+  components: {MovieCard, FINDR_Choice_Carousel, MainRecommended, ResultsPage, CardCarousel},
   computed: {
     store() {
       return store

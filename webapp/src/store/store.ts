@@ -104,6 +104,14 @@ async function fetchMovieData(media: Media) {
     });
 }
 
+//TODO: Implement
+function weightGenres(): Map<string, number> {
+    let genreWeights = new Map<string, number>();
+
+    return genreWeights;
+}
+
+//TODO: Refactor
 function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number>[] {
     let genreWeights = new Map<string, number>();
     let typeWeights = new Map<string, number>();
@@ -380,22 +388,6 @@ export const store: Store<State> = createStore({
         }
     },
 });
-
-function similar(a: string, b: string): number {
-    a = a.toLowerCase();
-    b = b.toLowerCase();
-    let equivalency = 0;
-    let minLength = (a.length > b.length) ? b.length : a.length;
-    let maxLength = (a.length < b.length) ? b.length : a.length;
-    for (let i = 0; i < minLength; i++) {
-        if (a[i] == b[i]) {
-            equivalency++;
-        }
-    }
-
-    let weight = equivalency / maxLength;
-    return (weight * 100);
-}
 
 interface Media {
     id: string,

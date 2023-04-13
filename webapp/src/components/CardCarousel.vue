@@ -7,9 +7,7 @@
       </button>
       <div class="carousel--scroll-panel" id="scroll" ref="scroll">
         <div class="carousel--cards">
-          <div v-for="mediaItem in media" class="carousel--card">
-            <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
-          </div>
+          <slot :media="media"></slot>
         </div>
       </div>
       <button id="carousel--right-button" v-on:click="slide(false)" class="carousel--right-button">
