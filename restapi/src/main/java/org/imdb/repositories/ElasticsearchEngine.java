@@ -29,4 +29,8 @@ public interface ElasticsearchEngine {
                                   int minRuntimeMin, double minAvgRating,
                                   double maxAvgRating, String type,
                                   String[] genres);
+
+    List<Movie> getNotToWatchMovies();
+
+    List<Movie> getAllTimesRecommended();
 }
