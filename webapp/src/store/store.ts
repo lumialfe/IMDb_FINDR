@@ -79,7 +79,7 @@ async function fetchMedia(url: string,): Promise<Media[]> {
 
 async function fetchMovieData(media: Media) {
     let baseURL = "https://api.themoviedb.org/3/find/";
-    const apiKEY = "89d117037278a5d054a427790b60933e";
+    const apiKEY = import.meta.env.VITE_API_KEY
     let url = baseURL + media.id + "?api_key=" + apiKEY + "&language=en-US&external_source=imdb_id";
 
     await fetch(url).then(response => response.json()).then(async data => {
