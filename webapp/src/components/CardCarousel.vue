@@ -32,7 +32,7 @@ export default defineComponent({
   props: ["title", "media"],
   methods: {
     slide(left: boolean): void {
-      let divContent: HTMLDivElement = this.$refs.scroll;
+      let divContent: HTMLDivElement = (this.$refs.scroll as HTMLDivElement)
 
       if (left) {
         divContent.scrollLeft -= 242;

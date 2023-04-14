@@ -22,10 +22,10 @@ export default defineComponent({
     changeAsideVisibility() {
       store.commit("invertFINDR");
       if (store.getters.getFINDR) {
-        document.getElementById("main-container").style.gridTemplateColumns = "65% 35%";
-        document.getElementById("main-container").style.columnGap = "4rem";
+        (document.getElementById("main-container") as HTMLElement).style.gridTemplateColumns = "65% 35%";
+        (document.getElementById("main-container") as HTMLElement).style.columnGap = "4rem";
       } else {
-        document.getElementById("main-container").style.gridTemplateColumns = "100%";
+        (document.getElementById("main-container") as HTMLElement).style.gridTemplateColumns = "100%";
       }
     },
   },
@@ -68,6 +68,7 @@ header {
       button {
         min-width: fit-content;
         font-size: 110%;
+
         &:hover {
           transition: color .3s ease-in-out;
           color: $accent-color;
@@ -84,6 +85,7 @@ header {
       margin: 0;
       border-radius: 0;
       justify-content: space-around;
+
       .header--links {
         display: none;
       }
