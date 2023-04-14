@@ -4,7 +4,7 @@ import {
 } from "vuex";
 
 import type State from "./interfaces";
-import {movieTypes, type Media } from "./interfaces";
+import {movieTypes, type Media} from "./interfaces";
 
 async function fetchTrending(): Promise<Media[]> {
     let baseURL = "http://localhost:8080/imdb/_search/";
@@ -147,14 +147,14 @@ function weightProperty(liked: Media[], disliked: Media[], properties: string, p
 
 function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number>[] {
     let genreWeights = weightProperty(liked, disliked, "genres", "genre", 1.1, .9);
-    let typeWeights = weightProperty(liked, disliked, "type", "type", 1.1, .9);
 
     //TODO: In the future, we can add more properties to weight.
+    //let typeWeights = weightProperty(liked, disliked, "types", "type", 1.1, .9);
     //let directorWeights = weightProperty(liked, disliked, "directors", "director", 1.1, .9);
     //let starringWeights = weightProperty(liked, disliked, "starring", "starring", 1.1, .9)
     //return [genreWeights, typeWeights, directorWeights, starringWeights];
 
-    return [genreWeights, typeWeights];
+    return [genreWeights];
 }
 
 function clamp(input: number, min: number, max: number): number {

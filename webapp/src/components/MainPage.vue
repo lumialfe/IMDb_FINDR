@@ -4,7 +4,7 @@
     <CardCarousel v-if="store.getters.getLikedMedia.length > 0" title="Your FINDR™ Choices"
                   :media="store.getters.getLikedMedia" v-slot="slotProps">
       <TransitionGroup name="list">
-        <div v-for="mediaItem in slotProps.media" class="carousel--card">
+        <div v-for="(mediaItem, index) in slotProps.media" class="carousel--card" key="{{index}}">
           <FINDR_Choice_Card :media="mediaItem"></FINDR_Choice_Card>
         </div>
       </TransitionGroup>
