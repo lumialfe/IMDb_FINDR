@@ -5,33 +5,50 @@ import {
 
 import type State from "./interfaces";
 import {movieTypes, type Media} from "./interfaces";
+import {endpoints} from "@/store/endpoints";
+
+async function myFetch(endpoint: string, params?: Map<string, string>): Promise<Media[]> {
+    let url = endpoint;
+    if (params) {
+        url += "?";
+        for (let [key, value] of params) {
+            url += key + "=" + value + "&";
+        }
+        url = url.substring(0, url.length - 1);
+    }
+    return await fetchMedia(url);
+}
 
 async function fetchTrending(): Promise<Media[]> {
-    let baseURL = "http://localhost:8080/imdb/_search/";
-    let url = baseURL + "recommended" + "?year=" + (new Date().getFullYear() - 1) + "&size=20";
-    return await fetchMedia(url);
+    let params = new Map<string, string>([
+        ["year", (new Date().getFullYear() - 1).toString()],
+        ["size", "20"],
+    ]);
+    return await myFetch(endpoints.API_RECOMMENDED, params);
 }
 
 async function fetchTopAllTime(): Promise<Media[]> {
-    let url = "http://localhost:8080/imdb/_search/recommended-all-times";
-    return await fetchMedia(url);
+    return await myFetch(endpoints.API_TOP);
 }
 
 async function fetchNotToWatch(): Promise<Media[]> {
-    let url = "http://localhost:8080/imdb/_search/not-to-watch";
-    return await fetchMedia(url);
+    return await myFetch(endpoints.API_NOT_TO_WATCH);
 }
 
 async function fetchNew(): Promise<Media[]> {
-    let baseURL = "http://localhost:8080/imdb/_search/";
-    let url = baseURL + "recommended" + "?year=" + (new Date().getFullYear()) + "&size=20";
-    return await fetchMedia(url);
+    let params = new Map<string, string>([
+        ["year", (new Date().getFullYear()).toString()],
+        ["size", "20"],
+    ]);
+    return await myFetch(endpoints.API_RECOMMENDED, params);
 }
 
 async function fetchByTitle(query: string, type: string): Promise<Media[]> {
-    let baseURL = "http://localhost:8080/imdb/_search/";
-    let url = baseURL + "title" + "?title=" + query + "&type=" + type;
-    return await fetchMedia(url);
+    let params = new Map<string, string>([
+        ["title", query],
+        ["type", type],
+    ]);
+    return await myFetch(endpoints.API_TITLE, params);
 }
 
 async function fetchMedia(url: string,): Promise<Media[]> {
@@ -288,15 +305,6 @@ export const store: Store<State> = createStore({
                 if (query.length > 2) {
                     console.log("searching " + type + ": " + query);
                     let results: Media[] = await fetchByTitle(query, type);
-                    //commit("setResults", results.sort((a, b) => similar(query, b.title) - similar(query, a.title)));
-                    //commit("setResults", results.sort((a, b) => b.startYear - a.startYear));
-                    // commit("setResults", results.sort((a, b) => {
-                    //     if (a.startYear === b.startYear) {
-                    //         return b.averageRating - a.averageRating;
-                    //     } else {
-                    //         return b.startYear - a.startYear;
-                    //     }
-                    // }));
                     commit("setResults", results);
                 } else {
                     commit("setResults", []);
