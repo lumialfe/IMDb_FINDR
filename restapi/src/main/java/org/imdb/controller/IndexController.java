@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -45,7 +46,7 @@ public class IndexController {
 
     }
 
-    @Operation(description = "Creates the index with the specific mapping",
+    /*@Operation(description = "Creates the index with the specific mapping",
             responses = { @ApiResponse(responseCode = "200", description =
                     "Index created " +
                     "successfully"),
@@ -54,7 +55,8 @@ public class IndexController {
     @PutMapping("")
     public ResponseEntity createIndex(@Parameter(description = "Mapping file " +
             "to create the index", required = true) @RequestBody MultipartFile
-                                                  file){
+                                                  file
+                                      ){
         try {
             InputStream input = file.getInputStream();
             imdbService.createIndex(input);
@@ -62,7 +64,7 @@ public class IndexController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-    }
+    }*/
 
     @Operation(description = "Given a movie it is indexed", responses = {
             @ApiResponse(responseCode = "200", description = "Movie indexed " +
