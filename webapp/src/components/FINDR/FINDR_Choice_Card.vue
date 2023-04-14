@@ -30,6 +30,7 @@ export default {
 @import "../../assets/styles/styles.scss";
 
 .FINDR-choice {
+  max-width: 20vw;
   margin: 0;
   display: grid;
   grid-template-rows: 90% 10%;
@@ -41,6 +42,7 @@ export default {
 
   .FINDR-choice--content {
     .FINDR-choice--content--text {
+      width: 80%;
       padding-left: 10%;
       padding-right: 10%;
       display: grid;
@@ -64,6 +66,16 @@ export default {
           color: #ff0062;
         }
       }
+    }
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .FINDR-choice {
+    width: 50vw;
+    font-size: 50%;
+    img {
+      width: 100%;
     }
   }
 }

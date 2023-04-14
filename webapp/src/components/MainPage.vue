@@ -3,9 +3,11 @@
   <div class="main--main">
     <CardCarousel v-if="store.getters.getLikedMedia.length > 0" title="Your FINDR™ Choices"
                   :media="store.getters.getLikedMedia" v-slot="slotProps">
-      <div v-for="mediaItem in slotProps.media" class="carousel--card">
-        <FINDR_Choice_Card :media="mediaItem"></FINDR_Choice_Card>
-      </div>
+      <TransitionGroup name="list">
+        <div v-for="mediaItem in slotProps.media" class="carousel--card">
+          <FINDR_Choice_Card :media="mediaItem"></FINDR_Choice_Card>
+        </div>
+      </TransitionGroup>
     </CardCarousel>
 
     <div v-if="store.getters.getResults.length > 0" class="main--main--results">
@@ -43,13 +45,12 @@ import {store} from "@/store/store";
 import CardCarousel from "./CardCarousel.vue";
 import ResultsPage from "@/components/ResultsPage.vue";
 import MainRecommended from "@/components/MainRecommended.vue";
-import FINDR_Choice_Carousel from "@/components/FINDR/FINDR_Choice_Carousel.vue";
 import MovieCard from "@/components/MovieCard.vue";
 import FINDR_Choice_Card from "@/components/FINDR/FINDR_Choice_Card.vue";
 
 export default {
   name: "MainPage",
-  components: {FINDR_Choice_Card, MovieCard, FINDR_Choice_Carousel, MainRecommended, ResultsPage, CardCarousel},
+  components: {FINDR_Choice_Card, MovieCard, MainRecommended, ResultsPage, CardCarousel},
   computed: {
     store() {
       return store
@@ -69,5 +70,17 @@ export default {
   .main--main {
     width: 100%;
   }
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+  position: absolute;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(100%);
 }
 </style>
