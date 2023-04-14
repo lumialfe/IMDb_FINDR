@@ -20,7 +20,7 @@
         <div class="card--info">
           <div class="card--title">{{ media.title }}</div>
           <div class="card--categories">
-            <span>{{ media.type.toUpperCase()}} </span>
+            <span>{{ media.type.toUpperCase() }} </span>
             <span v-for="genre in media.genres"> {{ genre }}</span>
           </div>
           <div class="card--buttons">
@@ -54,11 +54,11 @@ export default defineComponent({
     changeInfo() {
       this.isShowingDescription = !this.isShowingDescription;
       if (this.isShowingDescription) {
-        document.getElementsByClassName("flip--image")[0].style.display = "none";
-        document.getElementsByClassName("flip--text")[0].style.display = "block";
+        (document.getElementsByClassName("flip--image")[0] as HTMLElement).style.display = "none";
+        (document.getElementsByClassName("flip--text")[0] as HTMLElement).style.display = "block";
       } else {
-        document.getElementsByClassName("flip--image")[0].style.display = "block";
-        document.getElementsByClassName("flip--text")[0].style.display = "none";
+        (document.getElementsByClassName("flip--image")[0] as HTMLElement).style.display = "block";
+        (document.getElementsByClassName("flip--text")[0] as HTMLElement).style.display = "none";
       }
     },
     like() {
@@ -95,7 +95,7 @@ export default defineComponent({
   background-color: $main-color-light;
   border-radius: 1.3rem;
 
-  width: 80%;
+  width: 85%;
   margin: 0 auto 8rem;
 
   .card--flip {
