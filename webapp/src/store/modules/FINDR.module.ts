@@ -1,17 +1,6 @@
 import type {Commit, Dispatch, Module, Store} from "vuex";
 import type {Media} from "@/store/interfaces";
 
-interface State {
-    FINDR: boolean,
-    likedMedia: Media[],
-    dislikedMedia: Media[],
-    FINDRMedia: Media[],
-}
-
-interface ComponentCustomProperties {
-    $store: Store<State> | Store<Commit> | Store<Dispatch>
-}
-
 export const FINDRModule: Module<State, ComponentCustomProperties> = {
     namespaced: true,
     state: {
@@ -55,4 +44,71 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
             return results;
         },
     }
+}
+
+// INTERFACES
+
+interface State {
+    FINDR: boolean,
+    likedMedia: Media[],
+    dislikedMedia: Media[],
+    FINDRMedia: Media[],
+}
+
+interface ComponentCustomProperties {
+    $store: Store<State> | Store<Commit> | Store<Dispatch>
+}
+
+// METHODS
+
+function weightProperty(liked: Media[], disliked: Media[], properties: string, property: string, positiveWeight: number, negativeWeight: number): Map<string, number> {
+    let weights = new Map<string, number>();
+
+    for (let media of liked) {
+        // @ts-ignore
+        for (property of media[properties]) {
+            if (weights.has(property)) {
+                // @ts-ignore
+                weights.set(property, weights.get(property) * positiveWeight); //Do not change it
+            } else {
+                weights.set(property, 1);
+            }
+        }
+    }
+
+    for (let media of disliked) {
+        // @ts-ignore
+        for (property of media[properties]) {
+            if (weights.has(property)) {
+                // @ts-ignore
+                weights.set(property, weights.get(property) * negativeWeight);
+            } else {
+                weights.set(property, .5);
+            }
+        }
+    }
+
+    const sortedWeights = new Map([...weights.entries()].sort((a, b) => b[1] - a[1]));
+
+    let max = Math.max(...sortedWeights.values());
+    let min = Math.min(...sortedWeights.values());
+
+    Object.keys(sortedWeights).forEach(function (key) {
+        // @ts-ignore
+        sortedWeights[key] = map(sortedWeights[key], min, max, 0, 1);
+    });
+
+    return sortedWeights;
+}
+
+function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number>[] {
+    let genreWeights = weightProperty(liked, disliked, "genres", "genre", 1.1, .9);
+
+    //TODO: In the future, we can add more properties to weight.
+    //let typeWeights = weightProperty(liked, disliked, "types", "type", 1.1, .9);
+    //let directorWeights = weightProperty(liked, disliked, "directors", "director", 1.1, .9);
+    //let starringWeights = weightProperty(liked, disliked, "starring", "starring", 1.1, .9)
+    //return [genreWeights, typeWeights, directorWeights, starringWeights];
+
+    return [genreWeights];
 }
