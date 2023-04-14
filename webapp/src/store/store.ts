@@ -29,7 +29,6 @@ async function fetchTopAllTime(): Promise<Media[]> {
     return await fetchMedia(url);
 }
 
-//TODO: Not showing the correct results
 async function fetchNotToWatch(): Promise<Media[]> {
     let url = "http://localhost:8080/imdb/_search/not-to-watch";
     return await fetchMedia(url);
@@ -175,6 +174,7 @@ function map(current: number, in_min: number, in_max: number, out_min: number, o
     return clamp(mapped, out_min, out_max);
 }
 
+// Executed when the page is loaded.
 let trendingMedia: Media[] = (await fetchTrending()).sort((n1, n2) => n2.averageRating - n1.averageRating);
 let newMedia: Media[] = await fetchNew();
 if (newMedia.length < 20) {
