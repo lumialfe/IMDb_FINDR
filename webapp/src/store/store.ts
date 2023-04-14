@@ -49,10 +49,11 @@ async function fetchMedia(url: string,): Promise<Media[]> {
                     averageRating: rating === undefined ? -1 : rating.toString().substring(0, 3),
                     type: media.titleType,
                     startYear: media.startYear,
-                    isAdult: media.isAdult,
+                    isAdult: false, // No adult movies indexed
                     directors: media.directors,
                     starring: media.starrings,
                     runtimeMinutes: media.runtimeMinutes,
+                    trailer: "https://www.youtube.com/embed/dQw4w9WgXcQ",
                 };
                 await fetchMovieData(m);
                 ret.push(m);
@@ -78,7 +79,7 @@ async function fetchMovieData(media: Media) {
 
         media.posterPath = "https://image.tmdb.org/t/p/w500" + data.poster_path;
         media.backdropPath = "https://image.tmdb.org/t/p/w500" + data.backdrop_path;
-        media.overview = data.overview;
+        media.overview = data.overview === undefined ? "Nothing to show here..." : data.overview;
         if (media.averageRating === -1) {
             let rating = data.vote_average;
             media.averageRating = rating === undefined ? media.averageRating : rating.toString().substring(0, 3);
@@ -88,12 +89,16 @@ async function fetchMovieData(media: Media) {
         movieTypes.includes(media.type as string) ? baseURL += "movie/" : baseURL += "tv/";
 
         await fetch(baseURL + data.id + "/videos?api_key=" + apiKEY + "&language=en-US" + data.id).then(response => response.json()).then(data => {
-            for (let i = 0; i < data.results.length; i++) {
-                if (data.results[i].site === "YouTube" && data.results[i].name.toLowerCase().includes("trailer")) {
-                    media.trailer = "https://www.youtube.com/embed/" + data.results[i].key;
-                    break;
-                } else {
-                    media.trailer = "https://www.youtube.com/embed/" + data.results[0].key;
+            if (data.results.length !== 0) {
+                for (let i = 0; i < data.results.length; i++) {
+                    if (data.results[i].site.toLowerCase() === "youtube") {
+                        if (data.results[i].name.toLowerCase().includes("trailer")) {
+                            media.trailer = "https://www.youtube.com/embed/" + data.results[i].key;
+                            break;
+                        } else {
+                            media.trailer = "https://www.youtube.com/embed/" + data.results[0].key;
+                        }
+                    }
                 }
             }
         }).catch(ex => {
@@ -173,7 +178,6 @@ if (newMedia.length < 20) {
     newMedia.sort((n1, n2) => n2.averageRating - n1.averageRating).push(...trendingMedia.sort((n1, n2) => n2.averageRating - n1.averageRating).slice(0, 20 - newMedia.length));
 }
 let topAllTimeMedia: Media[] = (await fetchTopAllTime()).sort((a, b) => b.averageRating - a.averageRating).slice(0, 20);
-// @ts-ignore
 let notToWatchMedia: Media[] = (await fetchNotToWatch()).slice(0, 20).sort((n1, n2) => n2.startYear - n1.startYear);
 
 export const store: Store<State> = createStore({
