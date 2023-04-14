@@ -3,20 +3,8 @@ import {
     Store,
 } from "vuex";
 
-interface State {
-    FINDR: boolean,
-    likedMedia: Media[],
-    dislikedMedia: Media[],
-    FINDRMedia: Media[],
-    results: Media[],
-    trending: Media[],
-    new: Media[],
-    topAllTime: Media[],
-    notToWatch: Media[],
-}
-
-const movieTypes = ["short", "movie", "tvMovie", "tvShort"];
-const tvTypes = ["tvSeries", "tvMiniSeries", "tvSpecial"];
+import type State from "./interfaces";
+import {movieTypes, type Media } from "./interfaces";
 
 async function fetchTrending(): Promise<Media[]> {
     let baseURL = "http://localhost:8080/imdb/_search/";
@@ -55,6 +43,7 @@ async function fetchMedia(url: string,): Promise<Media[]> {
 
                 let m: Media = {
                     id: media.tconst,
+                    imdbLink: "https://www.imdb.com/title/" + media.tconst,
                     title: media.primaryTitle,
                     genres: media.genres,
                     averageRating: rating === undefined ? -1 : rating.toString().substring(0, 3),
@@ -63,6 +52,7 @@ async function fetchMedia(url: string,): Promise<Media[]> {
                     isAdult: media.isAdult,
                     directors: media.directors,
                     starring: media.starrings,
+                    runtimeMinutes: media.runtimeMinutes,
                 };
                 await fetchMovieData(m);
                 ret.push(m);
@@ -93,7 +83,6 @@ async function fetchMovieData(media: Media) {
             let rating = data.vote_average;
             media.averageRating = rating === undefined ? media.averageRating : rating.toString().substring(0, 3);
         }
-        media.imdbLink = "https://www.imdb.com/title/" + media.id;
 
         let baseURL = "https://api.themoviedb.org/3/";
         movieTypes.includes(media.type as string) ? baseURL += "movie/" : baseURL += "tv/";
@@ -159,10 +148,13 @@ function weightProperty(liked: Media[], disliked: Media[], properties: string, p
 function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number>[] {
     let genreWeights = weightProperty(liked, disliked, "genres", "genre", 1.1, .9);
     let typeWeights = weightProperty(liked, disliked, "type", "type", 1.1, .9);
-    let directorWeights = weightProperty(liked, disliked, "directors", "director", 1.1, .9);
-    let starringWeights = weightProperty(liked, disliked, "starring", "starring", 1.1, .9)
 
-    return [genreWeights, typeWeights, directorWeights, starringWeights];
+    //TODO: In the future, we can add more properties to weight.
+    //let directorWeights = weightProperty(liked, disliked, "directors", "director", 1.1, .9);
+    //let starringWeights = weightProperty(liked, disliked, "starring", "starring", 1.1, .9)
+    //return [genreWeights, typeWeights, directorWeights, starringWeights];
+
+    return [genreWeights, typeWeights];
 }
 
 function clamp(input: number, min: number, max: number): number {
@@ -318,21 +310,3 @@ export const store: Store<State> = createStore({
         }
     },
 });
-
-interface Media {
-    id: string,
-    title: string,
-    genres: string[],
-    averageRating: number,
-    overview?: string,
-    posterPath?: string,
-    backdropPath?: string,
-    trailer?: string,
-    imdbLink?: string,
-    type: string,
-    runtimeMinutes?: number,
-    isAdult?: boolean,
-    startYear?: number,
-    directors?: string[],
-    starring?: string[],
-}
