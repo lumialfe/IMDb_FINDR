@@ -25,15 +25,13 @@ async function fetchTrending(): Promise<Media[]> {
 }
 
 async function fetchTopAllTime(): Promise<Media[]> {
-    let baseURL = "http://localhost:8080/imdb/_search/recommended-all-times";
-    let url = baseURL;
+    let url = "http://localhost:8080/imdb/_search/recommended-all-times";
     return await fetchMedia(url);
 }
 
 //TODO: Not showing the correct results
 async function fetchNotToWatch(): Promise<Media[]> {
-    let baseURL = "http://localhost:8080/imdb/_search/not-to-watch";
-    let url = baseURL;
+    let url = "http://localhost:8080/imdb/_search/not-to-watch";
     return await fetchMedia(url);
 }
 
@@ -288,8 +286,9 @@ let newMedia: Media[] = await fetchNew();
 if (newMedia.length < 20) {
     newMedia.sort((n1, n2) => n2.averageRating - n1.averageRating).push(...trendingMedia.sort((n1, n2) => n2.averageRating - n1.averageRating).slice(0, 20 - newMedia.length));
 }
-let topAllTimeMedia: Media[] = await fetchTopAllTime();
-let notToWatchMedia: Media[] = await fetchNotToWatch();
+let topAllTimeMedia: Media[] = (await fetchTopAllTime()).sort((a, b) => b.averageRating - a.averageRating).slice(0, 20);;
+// @ts-ignore
+let notToWatchMedia: Media[] = (await fetchNotToWatch()).slice(0, 20).sort((n1, n2) => n2.startYear - n1.startYear);
 export const store: Store<State> = createStore({
     state: {
         FINDR: false,

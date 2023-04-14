@@ -36,8 +36,6 @@ export default {
   },
   props: ["media"],
   name: "MovieCard",
-  mounted() {
-  }
 }
 </script>
 

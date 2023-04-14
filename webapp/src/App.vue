@@ -1,3 +1,4 @@
+<!--suppress JSUnusedGlobalSymbols -->
 <script lang="ts">
 import BottomSheet from "@/components/BottomSheet.vue";
 import {defineComponent} from "vue";

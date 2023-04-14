@@ -1,7 +1,13 @@
+<!--suppress JSUnresolvedVariable -->
 <template>
   <div class="main--main">
-    <FINDR_Choice_Carousel v-if="store.getters.getLikedMedia.length > 0" title="Your FINDR™ Choices"
-                           :media="store.getters.getLikedMedia"></FINDR_Choice_Carousel>
+    <CardCarousel v-if="store.getters.getLikedMedia.length > 0" title="Your FINDR™ Choices"
+                  :media="store.getters.getLikedMedia" v-slot="slotProps">
+      <div v-for="mediaItem in slotProps.media" class="carousel--card">
+        <FINDR_Choice_Card :media="mediaItem"></FINDR_Choice_Card>
+      </div>
+    </CardCarousel>
+
     <div v-if="store.getters.getResults.length > 0" class="main--main--results">
       <ResultsPage v-bind:media="store.getters.getResults"></ResultsPage>
     </div>
@@ -39,10 +45,11 @@ import ResultsPage from "@/components/ResultsPage.vue";
 import MainRecommended from "@/components/MainRecommended.vue";
 import FINDR_Choice_Carousel from "@/components/FINDR/FINDR_Choice_Carousel.vue";
 import MovieCard from "@/components/MovieCard.vue";
+import FINDR_Choice_Card from "@/components/FINDR/FINDR_Choice_Card.vue";
 
 export default {
   name: "MainPage",
-  components: {MovieCard, FINDR_Choice_Carousel, MainRecommended, ResultsPage, CardCarousel},
+  components: {FINDR_Choice_Card, MovieCard, FINDR_Choice_Carousel, MainRecommended, ResultsPage, CardCarousel},
   computed: {
     store() {
       return store
