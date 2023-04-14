@@ -117,159 +117,53 @@ async function fetchMovieData(media: Media) {
     });
 }
 
-//TODO: Implement
-function weightGenres(): Map<string, number> {
-    let genreWeights = new Map<string, number>();
-
-    return genreWeights;
-}
-
-//TODO: Refactor
-function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number>[] {
-    let genreWeights = new Map<string, number>();
-    let typeWeights = new Map<string, number>();
-    let directorWeights = new Map<string, number>();
-    let starringWeights = new Map<string, number>();
+function weightProperty(liked: Media[], disliked: Media[], properties: string, property: string, positiveWeight: number, negativeWeight: number): Map<string, number> {
+    let weights = new Map<string, number>();
 
     for (let media of liked) {
-        for (let genre of media.genres) {
-            // @ts-ignore
-            if (genreWeights.has(genre)) {
+        // @ts-ignore
+        for (property of media[properties]) {
+            if (weights.has(property)) {
                 // @ts-ignore
-                genreWeights.set(genre, genreWeights.get(genre) * 1); //Do not change it
+                weights.set(property, weights.get(property) * positiveWeight); //Do not change it
             } else {
-                // @ts-ignore
-                genreWeights.set(genre, 1);
+                weights.set(property, 1);
             }
         }
-
-        // @ts-ignore
-        for (let director of media.directors) {
-            // @ts-ignore
-            if (directorWeights.has(director.nconst)) {
-                // @ts-ignore
-                directorWeights.set(director.nconst, directorWeights.get(director.nconst) * 1); //Do not change it
-            } else {
-                // @ts-ignore
-                directorWeights.set(director.nconst, 1);
-            }
-        }
-
-        // @ts-ignore
-        let actor = media.starring[0];            // @ts-ignore
-        // @ts-ignore
-        if (media.starring?.indexOf(actor) > 1) {
-            break;
-        }
-        // @ts-ignore
-        if (starringWeights.has(actor.name.nconst)) {
-            // @ts-ignore
-            starringWeights.set(actor.name.nconst, starringWeights.get(actor.name.nconst) * 1); //Do not change it
-        } else {
-            // @ts-ignore
-            starringWeights.set(actor.name.nconst, 1);
-        }
-
-
-        let type = media.type;
-        // @ts-ignore
-        if (typeWeights.has(type)) {
-            // @ts-ignore
-            typeWeights.set(type, typeWeights.get(type) * 1); //Do not change it
-        } else {
-            // @ts-ignore
-            typeWeights.set(type, 1);
-        }
-
     }
 
     for (let media of disliked) {
-        for (let genre of media.genres) {
-            // @ts-ignore
-            if (genreWeights.has(genre)) {
+        // @ts-ignore
+        for (property of media[properties]) {
+            if (weights.has(property)) {
                 // @ts-ignore
-                genreWeights.set(genre, genreWeights.get(genre) * .5);
+                weights.set(property, weights.get(property) * negativeWeight);
             } else {
-                // @ts-ignore
-                genreWeights.set(genre, 0);
+                weights.set(property, .5);
             }
-        }
-
-        // @ts-ignore
-        for (let director of media.directors) {
-            // @ts-ignore
-            if (directorWeights.has(director.nconst)) {
-                // @ts-ignore
-                directorWeights.set(genre, directorWeights.get(director.nconst) * .5);
-            } else {
-                // @ts-ignore
-                directorWeights.set(director.nconst, 0);
-            }
-        }
-
-        // @ts-ignore
-        let actor = media.starring[0];            // @ts-ignore
-        // @ts-ignore
-        if (starringWeights.has(actor.name.nconst)) {
-            // @ts-ignore
-            starringWeights.set(actor.name.nconst, starringWeights.get(actor.name.nconst) * .5); //Do not change it
-        } else {
-            // @ts-ignore
-            starringWeights.set(actor.name.nconst, 0);
-        }
-
-
-        let type = media.type;
-        // @ts-ignore
-        if (typeWeights.has(type)) {
-            // @ts-ignore
-            typeWeights.set(type, typeWeights.get(type) * .9); //Do not change it
-        } else {
-            // @ts-ignore
-            typeWeights.set(type, .5);
         }
     }
 
-    const sortedGenreWeights = new Map([...genreWeights.entries()].sort((a, b) => b[1] - a[1]));
-    const sortedDirectorWeights = new Map([...directorWeights.entries()].sort((a, b) => b[1] - a[1]));
-    const sortedStarringWeights = new Map([...starringWeights.entries()].sort((a, b) => b[1] - a[1]));
-    const sortedTypeWeights = new Map([...typeWeights.entries()].sort((a, b) => b[1] - a[1]));
+    const sortedWeights = new Map([...weights.entries()].sort((a, b) => b[1] - a[1]));
 
-    let max = Math.max(...sortedGenreWeights.values());
-    let min = Math.min(...sortedGenreWeights.values());
+    let max = Math.max(...sortedWeights.values());
+    let min = Math.min(...sortedWeights.values());
 
-    Object.keys(sortedGenreWeights).forEach(function (key) {
+    Object.keys(sortedWeights).forEach(function (key) {
         // @ts-ignore
-        sortedGenreWeights[key] = map(sortedGenreWeights[key], min, max, 0, 1);
+        sortedWeights[key] = map(sortedWeights[key], min, max, 0, 1);
     });
 
-    max = Math.max(...sortedDirectorWeights.values());
-    min = Math.min(...sortedDirectorWeights.values());
+    return sortedWeights;
+}
 
-    Object.keys(sortedDirectorWeights).forEach(function (key) {
-        // @ts-ignore
-        sortedDirectorWeights[key] = map(sortedDirectorWeights[key], min, max, 0, 1);
-    });
+function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number>[] {
+    let genreWeights = weightProperty(liked, disliked, "genres", "genre", 1.1, .9);
+    let typeWeights = weightProperty(liked, disliked, "type", "type", 1.1, .9);
+    let directorWeights = weightProperty(liked, disliked, "directors", "director", 1.1, .9);
+    let starringWeights = weightProperty(liked, disliked, "starring", "starring", 1.1, .9)
 
-    max = Math.max(...sortedStarringWeights.values());
-    min = Math.min(...sortedStarringWeights.values());
-
-    Object.keys(sortedStarringWeights).forEach(function (key) {
-        // @ts-ignore
-        sortedStarringWeights[key] = map(sortedStarringWeights[key], min, max, 0, 1);
-    });
-
-    max = Math.max(...sortedTypeWeights.values());
-    min = Math.min(...sortedTypeWeights.values());
-
-    Object.keys(sortedTypeWeights).forEach(function (key) {
-        // @ts-ignore
-        sortedTypeWeights[key] = map(sortedTypeWeights[key], min, max, 0, 1);
-    });
-
-    console.log([sortedGenreWeights, sortedDirectorWeights, sortedStarringWeights, sortedTypeWeights]);
-
-    return [sortedGenreWeights, sortedDirectorWeights, sortedStarringWeights, sortedTypeWeights];
+    return [genreWeights, typeWeights, directorWeights, starringWeights];
 }
 
 function clamp(input: number, min: number, max: number): number {
@@ -286,9 +180,11 @@ let newMedia: Media[] = await fetchNew();
 if (newMedia.length < 20) {
     newMedia.sort((n1, n2) => n2.averageRating - n1.averageRating).push(...trendingMedia.sort((n1, n2) => n2.averageRating - n1.averageRating).slice(0, 20 - newMedia.length));
 }
-let topAllTimeMedia: Media[] = (await fetchTopAllTime()).sort((a, b) => b.averageRating - a.averageRating).slice(0, 20);;
+let topAllTimeMedia: Media[] = (await fetchTopAllTime()).sort((a, b) => b.averageRating - a.averageRating).slice(0, 20);
+;
 // @ts-ignore
 let notToWatchMedia: Media[] = (await fetchNotToWatch()).slice(0, 20).sort((n1, n2) => n2.startYear - n1.startYear);
+
 export const store: Store<State> = createStore({
     state: {
         FINDR: false,
@@ -412,11 +308,12 @@ export const store: Store<State> = createStore({
         async updateFINDRResults({commit, state}): Promise<Media[]> {
             let results: Media[] = [];
             // Calculate weights for each media type
+            console.log("STARTING FINDR");
             let weights = weightFINDRChoices(state.likedMedia, state.dislikedMedia);
-
+            console.log(weights);
+            console.log("FINDR DONE");
             // @ts-ignore
             commit("setResults", results);
-            console.log(results);
             return results;
         }
     },
