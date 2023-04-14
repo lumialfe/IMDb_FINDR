@@ -1,13 +1,13 @@
 export default interface State {
     FINDR: boolean,
-        likedMedia: Media[],
-        dislikedMedia: Media[],
-        FINDRMedia: Media[],
-        results: Media[],
-        trending: Media[],
-        new: Media[],
-        topAllTime: Media[],
-        notToWatch: Media[],
+    likedMedia: Media[],
+    dislikedMedia: Media[],
+    FINDRMedia: Media[],
+    results: Media[],
+    trending: Media[],
+    new: Media[],
+    topAllTime: Media[],
+    notToWatch: Media[],
 }
 
 export interface Media {
