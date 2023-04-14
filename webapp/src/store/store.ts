@@ -285,16 +285,19 @@ export const store: Store<State> = createStore({
             if (dropdown && searchBar) {
                 let type: string = dropdown.value;
                 let query: string = searchBar.value;
-                if (query.length > 3) {
-                    //TODO: if all, show carousel of results, else show list
-
+                if (query.length > 2) {
                     console.log("searching " + type + ": " + query);
                     let results: Media[] = await fetchByTitle(query, type);
-                    // @ts-ignore
                     //commit("setResults", results.sort((a, b) => similar(query, b.title) - similar(query, a.title)));
                     //commit("setResults", results.sort((a, b) => b.startYear - a.startYear));
+                    // commit("setResults", results.sort((a, b) => {
+                    //     if (a.startYear === b.startYear) {
+                    //         return b.averageRating - a.averageRating;
+                    //     } else {
+                    //         return b.startYear - a.startYear;
+                    //     }
+                    // }));
                     commit("setResults", results);
-
                 } else {
                     commit("setResults", []);
                 }
