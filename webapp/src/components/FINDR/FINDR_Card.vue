@@ -178,18 +178,14 @@ export default defineComponent({
 }
 
 .slide-like-leave-active,
-.slide-like-enter-active,
-.slide-dislike-leave-active,
-.slide-dislike-enter-active {
+.slide-dislike-leave-active {
   transition: all 0.3s ease-out;
 }
 
-.slide-like-enter-from,
 .slide-like-leave-to {
   transform: translateX(-30vw);
 }
 
-.slide-dislike-enter-from,
 .slide-dislike-leave-to {
   transform: translateX(30vw);
 }

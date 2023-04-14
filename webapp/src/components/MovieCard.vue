@@ -11,8 +11,13 @@
         <a class="info--title--link" v-bind:href="media.imdbLink">{{ this.media.title }}</a>
       </div>
       <div class="info--rating">
-        <span class="fa fa-star checked"></span>
-        {{ this.media.averageRating === -1 ? "N/A" : this.media.averageRating }}
+        <span>
+          <span class="fa fa-star checked"></span>
+          {{ this.media.averageRating === -1 ? "N/A" : this.media.averageRating }}
+        </span>
+        <span>
+         {{this.media.type.toUpperCase()}}
+        </span>
       </div>
       <div class="info--trailer">
         <a class="button-link" target="_blank" v-bind:href="media.trailer">
@@ -84,7 +89,9 @@ export default {
     }
 
     .info--rating {
-
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
       .checked {
         color: $accent-color;
       }
