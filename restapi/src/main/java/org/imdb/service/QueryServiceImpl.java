@@ -87,7 +87,7 @@ public class QueryServiceImpl implements QueryService{
         List<Query> queries = new ArrayList<>();
 
         if(minYear > 0 && maxYear > 0 && maxYear > minYear){
-            queries.add(queryProvider.getRangedQueryDouble("startYear", "endYear",
+            queries.add(queryProvider.getRangedQueryDoubleValue("startYear",
                     minYear, maxYear));
         }
 
@@ -112,8 +112,10 @@ public class QueryServiceImpl implements QueryService{
 
         }
 
+        queries.add(queryProvider.getMinNumOfVotes(200000));
+
         Query query =
-                BoolQuery.of(q -> q.must(queries))._toQuery();
+                BoolQuery.of(q -> q.filter(queries))._toQuery();
 
         return elasticsearchEngine.getQueryResult(20, query);
     }
