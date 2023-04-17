@@ -1,7 +1,7 @@
 <template>
   <div id="FINDR-container" class="main--FINDR">
     <h2>FINDR™</h2>
-    <FINDR_Card_Stack v-bind:media="store.getters.getFINDRMediaDemo"></FINDR_Card_Stack>
+    <FINDR_Card_Stack v-bind:media="store.getters['FINDR/getFINDRCardMedia']"></FINDR_Card_Stack>
     <h4>About FINDR™</h4>
     <p>
       FINDR™ is a movie recommendation system that uses a combination of machine learning and

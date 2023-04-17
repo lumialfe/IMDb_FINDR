@@ -20,7 +20,7 @@ export default {
   methods: {
     next() {
       this.current++;
-      store.dispatch("updateFINDRResults");
+      store.dispatch("FINDR/updateFINDRResults");
     },
   },
 };

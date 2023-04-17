@@ -1,5 +1,8 @@
-import type {Commit, Dispatch, Module, Store} from "vuex";
-import type {Media} from "@/store/interfaces";
+import type {Module} from "vuex";
+import type {Media} from "@/store/util";
+import type {ComponentCustomProperties} from "@/store/util";
+import {endpoints} from "@/store/endpoints";
+import {myFetch} from "@/store/util";
 
 export const FINDRModule: Module<State, ComponentCustomProperties> = {
     namespaced: true,
@@ -8,16 +11,19 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
         likedMedia: [],
         dislikedMedia: [],
         FINDRMedia: [],
+        FINDRCardMedia: [],
     },
     getters: {
         getFINDR: (state: State) => state.FINDR,
         getLikedMedia: (state: State) => state.likedMedia,
         getDislikedMedia: (state: State) => state.dislikedMedia,
         getFINDRMedia: (state: State) => state.FINDRMedia,
+        getFINDRCardMedia: (state: State) => state.FINDRCardMedia,
     },
     mutations: {
-        setFINDR: (state: State, FINDR: boolean) => state.FINDR = FINDR,
-        invertFINDR: (state: State) => state.FINDR = !state.FINDR,
+        setFINDR: (state: State, FINDR: boolean) => {
+            state.FINDR = FINDR;
+        },
 
         setLikedMedia: (state: State, likedMedia: Media[]) => state.likedMedia = likedMedia,
         addLikedMedia: (state: State, likedMedia: Media) => state.likedMedia.push(likedMedia),
@@ -30,6 +36,8 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
         clearDislikedMedia: (state: State) => state.dislikedMedia = [],
 
         setFINDRMedia: (state: State, FINDRMedia: Media[]) => state.FINDRMedia = FINDRMedia,
+        setFINDRCardMedia: (state: State, FINDRCardMedia: Media[]) => state.FINDRCardMedia = FINDRCardMedia,
+        addFINDRCardMedia: (state: State, FINDRCardMedia: Media) => state.FINDRCardMedia.push(FINDRCardMedia),
     },
     actions: {
         async updateFINDRResults({commit, state}): Promise<Media[]> {
@@ -37,14 +45,40 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
             // Calculate weights for each media type
             console.log("STARTING FINDR");
             let weights = weightFINDRChoices(state.likedMedia, state.dislikedMedia);
+            let i: number = 0;
+            for (let [key, value] of weights) {
+                if (i < 3) {
+                    let aux = await myFetch(
+                        endpoints.API_FILTERS,
+                        new Map<string, string>([
+                            ["minYear", "0"],
+                            ["maxYear", "0"],
+                            ["maxRuntimeMin", "0"],
+                            ["minRuntimeMin", "0"],
+                            ["minAvgRating", "0"],
+                            ["maxAvgRating", "0"],
+                            ["type", ""],
+                            ["genres", [key].toString()],
+
+                    ]));
+                    console.log(aux);
+                    i++;
+                } else {
+                    break;
+                }
+            }
             console.log(weights);
             console.log("FINDR DONE");
             // @ts-ignore
-            commit("setResults", results);
+            commit("setFINDRMedia", results);
             return results;
         },
+        invertFINDR: ({commit, state}) => {
+            commit("setFINDR", !state.FINDR);
+        }
     }
 }
+
 
 // INTERFACES
 
@@ -53,10 +87,7 @@ interface State {
     likedMedia: Media[],
     dislikedMedia: Media[],
     FINDRMedia: Media[],
-}
-
-interface ComponentCustomProperties {
-    $store: Store<State> | Store<Commit> | Store<Dispatch>
+    FINDRCardMedia: Media[],
 }
 
 // METHODS
@@ -71,7 +102,7 @@ function weightProperty(liked: Media[], disliked: Media[], properties: string, p
                 // @ts-ignore
                 weights.set(property, weights.get(property) * positiveWeight); //Do not change it
             } else {
-                weights.set(property, 1);
+                weights.set(property, .75);
             }
         }
     }
@@ -83,7 +114,7 @@ function weightProperty(liked: Media[], disliked: Media[], properties: string, p
                 // @ts-ignore
                 weights.set(property, weights.get(property) * negativeWeight);
             } else {
-                weights.set(property, .5);
+                weights.set(property, .25);
             }
         }
     }
@@ -101,8 +132,8 @@ function weightProperty(liked: Media[], disliked: Media[], properties: string, p
     return sortedWeights;
 }
 
-function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number>[] {
-    let genreWeights = weightProperty(liked, disliked, "genres", "genre", 1.1, .9);
+function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number> {
+    let genreWeights = weightProperty(liked, disliked, "genres", "genre", 1, .9);
 
     //TODO: In the future, we can add more properties to weight.
     //let typeWeights = weightProperty(liked, disliked, "types", "type", 1.1, .9);
@@ -110,5 +141,5 @@ function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, numb
     //let starringWeights = weightProperty(liked, disliked, "starring", "starring", 1.1, .9)
     //return [genreWeights, typeWeights, directorWeights, starringWeights];
 
-    return [genreWeights];
+    return genreWeights;
 }

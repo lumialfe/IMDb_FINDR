@@ -20,8 +20,8 @@ export default defineComponent({
   components: {SearchBar},
   methods: {
     changeAsideVisibility() {
-      store.commit("invertFINDR");
-      if (store.getters.getFINDR) {
+      store.dispatch("FINDR/invertFINDR");
+      if (store.getters["FINDR/getFINDR"]) {
         (document.getElementById("main-container") as HTMLElement).style.gridTemplateColumns = "65% 35%";
         (document.getElementById("main-container") as HTMLElement).style.columnGap = "4rem";
       } else {

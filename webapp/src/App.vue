@@ -12,6 +12,9 @@ export default defineComponent({
   computed: {
     store() {
       return store
+    },
+    FINDR() {
+      return store.getters['FINDR/getFINDR'];
     }
   },
   created() {
@@ -26,7 +29,7 @@ export default defineComponent({
   <main id="main-container">
     <MainPage></MainPage>
     <Transition name="slide-fade">
-      <FINDR_Div v-if="store.getters.getFINDR"></FINDR_Div>
+      <FINDR_Div v-if="FINDR"></FINDR_Div>
     </Transition>
     <BottomSheet></BottomSheet>
   </main>

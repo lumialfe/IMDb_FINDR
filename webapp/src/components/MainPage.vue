@@ -1,8 +1,8 @@
 <!--suppress JSUnresolvedVariable -->
 <template>
   <div class="main--main">
-    <CardCarousel v-if="store.getters.getLikedMedia.length > 0" title="Your FINDR™ Choices"
-                  :media="store.getters.getLikedMedia" v-slot="slotProps">
+    <CardCarousel v-if="store.getters['FINDR/getLikedMedia'].length > 0" title="Your FINDR™ Choices"
+                  :media="store.getters['FINDR/getLikedMedia']" v-slot="slotProps">
       <TransitionGroup name="list">
         <div v-for="(mediaItem, index) in slotProps.media" class="carousel--card" key="{{index}}">
           <FINDR_Choice_Card :media="mediaItem"></FINDR_Choice_Card>
@@ -10,30 +10,30 @@
       </TransitionGroup>
     </CardCarousel>
 
-    <div v-if="store.getters.getResults.length > 0" class="main--main--results">
-      <ResultsPage v-bind:media="store.getters.getResults"></ResultsPage>
+    <div v-if="store.getters['getResults'].length > 0" class="main--main--results">
+      <ResultsPage v-bind:media="store.getters['getResults']"></ResultsPage>
     </div>
     <div v-else class="main--main--main>">
-      <MainRecommended :media="store.getters.getTrending.slice(0, 4)"></MainRecommended>
+      <MainRecommended :media="store.getters['getTrending'].slice(0, 4)"></MainRecommended>
 
-      <CardCarousel title="Trending Now" :media="store.getters.getTrending" v-slot="slotProps">
+      <CardCarousel title="Trending Now" :media="store.getters['getTrending']" v-slot="slotProps">
         <div v-for="mediaItem in slotProps.media" class="carousel--card">
-          <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
+          <MovieCard v-if="!store.getters['isRendering']" :media="mediaItem"></MovieCard>
         </div>
       </CardCarousel>
-      <CardCarousel title="Top New Releases" :media="store.getters.getNew" v-slot="slotProps">
+      <CardCarousel title="Top New Releases" :media="store.getters['getNew']" v-slot="slotProps">
         <div v-for="mediaItem in slotProps.media" class="carousel--card">
-          <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
+          <MovieCard v-if="!store.getters['isRendering']" :media="mediaItem"></MovieCard>
         </div>
       </CardCarousel>
-      <CardCarousel title="Top Ever" :media="store.getters.getTopAllTime" v-slot="slotProps">
+      <CardCarousel title="Top Ever" :media="store.getters['getTopAllTime']" v-slot="slotProps">
         <div v-for="mediaItem in slotProps.media" class="carousel--card">
-          <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
+          <MovieCard v-if="!store.getters['isRendering']" :media="mediaItem"></MovieCard>
         </div>
       </CardCarousel>
-      <CardCarousel title="Not To Watch" :media="store.getters.getNotToWatch" v-slot="slotProps">
+      <CardCarousel title="Not To Watch" :media="store.getters['getNotToWatch']" v-slot="slotProps">
         <div v-for="mediaItem in slotProps.media" class="carousel--card">
-          <MovieCard v-if="!store.getters.isRendering" :media="mediaItem"></MovieCard>
+          <MovieCard v-if="!store.getters['isRendering']" :media="mediaItem"></MovieCard>
         </div>
       </CardCarousel>
     </div>

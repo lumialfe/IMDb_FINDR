@@ -65,14 +65,14 @@ export default defineComponent({
       console.log("like");
       this.chosenCardAction = "slide-like";
       this.isShowing = false;
-      store.commit("addLikedMedia", this.media);
+      store.commit("FINDR/addLikedMedia", this.media);
       this.parent.next();
     },
     dislike() {
       this.chosenCardAction = "slide-dislike";
       console.log("dislike");
       this.isShowing = false;
-      store.commit("addDislikedMedia", this.media);
+      store.commit("FINDR/addDislikedMedia", this.media);
       this.parent.next();
     },
   },
