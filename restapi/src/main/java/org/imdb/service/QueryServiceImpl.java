@@ -39,12 +39,10 @@ public class QueryServiceImpl implements QueryService{
     public List<Movie> getMoviesByTitle(String title, String type) throws IOException {
         List<Query> queries = new ArrayList<>();
         //queries.add(queryProvider.getMultiMatchQuery("primaryTitle",
-        //        "originalTitle", title));
-
+         //       "originalTitle", title));
         queries.add(queryProvider.getTitle(title));
 
-        Query typeQ = checkType(type);//queryProvider.getMatchQuery("titleType",
-                //type);
+        Query typeQ = checkType(type);
         if(typeQ != null){
             queries.add(typeQ);
         }
@@ -103,29 +101,20 @@ public class QueryServiceImpl implements QueryService{
                     maxAvgRating));
         }
 
-        Query typeQ = queryProvider.getMatchQuery("titleType", type);
+        Query typeQ = checkType(type);
 
         if(typeQ != null){
             queries.add(typeQ);
         }
 
-        if (genres != null) {
+        if (genres.length > 0) {
 
-            String query = "";
-            for(int i = 0; i < genres.length; i++){
-                if(i != (genres.length - 1)){
-                    query += genres[i] + ", ";
-                }else{
-                    query += genres[i];
-                }
-            }
-            String finalQ = query;
-            queries.add(queryProvider.getMatchQuery("genres",finalQ));
+            queries.add(queryProvider.getTermQuery("genres", genres));
 
         }
 
         Query query =
-                BoolQuery.of(q -> q.filter(queries))._toQuery();
+                BoolQuery.of(q -> q.must(queries))._toQuery();
 
         return elasticsearchEngine.getQueryResult(20, query);
     }
