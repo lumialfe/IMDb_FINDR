@@ -3,6 +3,7 @@ import type {Media} from "@/store/util";
 import type {ComponentCustomProperties} from "@/store/util";
 import {endpoints} from "@/store/endpoints";
 import {myFetch} from "@/store/util";
+import {store} from "@/store/store";
 
 export const FINDRModule: Module<State, ComponentCustomProperties> = {
     namespaced: true,
@@ -41,13 +42,15 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
     },
     actions: {
         async updateFINDRResults({commit, state}): Promise<Media[]> {
+            store.commit("setResults", []);
+
             let results: Media[] = [];
             // Calculate weights for each media type
             console.log("STARTING FINDR");
             let weights = weightFINDRChoices(state.likedMedia, state.dislikedMedia);
             let i: number = 0;
             for (let [key, value] of weights) {
-                if (i < 3) {
+                if (i < 3 && value > 0.5) {
                     let aux = await myFetch(
                         endpoints.API_FILTERS,
                         new Map<string, string>([
@@ -57,20 +60,38 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
                             ["minRuntimeMin", "0"],
                             ["minAvgRating", "0"],
                             ["maxAvgRating", "0"],
-                            ["type", ""],
+                            ["type", "movie"],
                             ["genres", [key].toString()],
 
-                    ]));
-                    console.log(aux);
+                        ]));
+                    aux.sort((a: Media, b: Media) => b.averageRating - a.averageRating);
+                    results = results.concat(aux.slice(0, (3 - i) * 5));
                     i++;
                 } else {
                     break;
                 }
             }
             console.log(weights);
+            console.log(results);
+
+            for (let result of results) {
+                if (state.dislikedMedia.includes(result)) {
+                    results.splice(results.indexOf(result), 1);
+                }
+            }
+
             console.log("FINDR DONE");
-            // @ts-ignore
-            commit("setFINDRMedia", results);
+            //TODO: Fix repeated FINDR media in stack
+
+            //commit("setFINDRMedia", results);
+            store.commit("setResults", results);
+            for (let i = 0; i < results.length; i++) {
+                if (!state.likedMedia.includes(results[i])) {
+                    commit("addFINDRCardMedia", results[i]);
+                    break;
+                }
+            }
+            commit("addFINDRCardMedia", results[0]);
             return results;
         },
         invertFINDR: ({commit, state}) => {
