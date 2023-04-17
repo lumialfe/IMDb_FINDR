@@ -86,17 +86,17 @@ public class QueryServiceImpl implements QueryService{
                                          String[] genres) throws IOException {
         List<Query> queries = new ArrayList<>();
 
-        if(minYear != 0 && maxYear != 0){
+        if(minYear > 0 && maxYear > 0 && maxYear > minYear){
             queries.add(queryProvider.getRangedQueryDouble("startYear", "endYear",
                     minYear, maxYear));
         }
 
-        if(minRuntimeMin > 0 && maxRuntimeMin != 0){
+        if(minRuntimeMin > 0 && maxRuntimeMin > 0 && maxRuntimeMin > minRuntimeMin){
             queries.add(queryProvider.getRangedQueryDoubleValue("runtimeMinutes",
                     minRuntimeMin,
                     maxRuntimeMin));
         }
-        if(minAvgRating >= 0 && maxAvgRating != 0){
+        if(minAvgRating >= 0 && maxAvgRating > 0 && maxAvgRating > minAvgRating){
             queries.add(queryProvider.getRangedQueryDoubleValue("avgRating", minAvgRating,
                     maxAvgRating));
         }
@@ -108,7 +108,6 @@ public class QueryServiceImpl implements QueryService{
         }
 
         if (genres.length > 0) {
-
             queries.add(queryProvider.getTermQuery("genres", genres));
 
         }
