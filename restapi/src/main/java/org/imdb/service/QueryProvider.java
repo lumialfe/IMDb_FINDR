@@ -1,10 +1,13 @@
 package org.imdb.service;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import co.elastic.clients.json.JsonData;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class QueryProvider {
 
@@ -50,5 +53,20 @@ public class QueryProvider {
         return MatchPhrasePrefixQuery.of(m -> m.field("primaryTitle").field(
                         "originalTitle")
                 .query(title))._toQuery();
+    }
+
+    public HashMap<String, Aggregation> getAggregations(){
+        HashMap<String, Aggregation> result = new HashMap<>();
+        result.put("genres",
+                Aggregation.of(a -> a.terms(t -> t.field("genres"))));
+        return result;
+    }
+
+    public Query getTermQuery(String field, String[] values) {
+        TermsQueryField terms = new TermsQueryField.Builder()
+                .value(Arrays.asList(values).stream().map(FieldValue::of).toList())
+                .build();
+        return TermsQuery.of(t -> t.field(field).terms(terms)
+        )._toQuery();
     }
 }
