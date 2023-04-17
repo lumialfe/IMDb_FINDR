@@ -45,4 +45,10 @@ public class QueryProvider {
                 .gte(JsonData.of(votes)))._toQuery();
         return votesQuery;
     }
+
+    public Query getTitle(String title){
+        return MatchPhrasePrefixQuery.of(m -> m.field("primaryTitle").field(
+                        "originalTitle")
+                .query(title))._toQuery();
+    }
 }

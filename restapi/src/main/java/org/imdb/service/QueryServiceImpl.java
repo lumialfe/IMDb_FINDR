@@ -38,9 +38,13 @@ public class QueryServiceImpl implements QueryService{
     @Override
     public List<Movie> getMoviesByTitle(String title, String type) throws IOException {
         List<Query> queries = new ArrayList<>();
-        queries.add(queryProvider.getMultiMatchQuery("primaryTitle",
-                "originalTitle", title));
-        Query typeQ = queryProvider.getMatchQuery("titleType", type);
+        //queries.add(queryProvider.getMultiMatchQuery("primaryTitle",
+        //        "originalTitle", title));
+
+        queries.add(queryProvider.getTitle(title));
+
+        Query typeQ = checkType(type);//queryProvider.getMatchQuery("titleType",
+                //type);
         if(typeQ != null){
             queries.add(typeQ);
         }
@@ -52,6 +56,16 @@ public class QueryServiceImpl implements QueryService{
                         "titleType", NOT_MATCH_MOVIES)))._toQuery();
 
         return elasticsearchEngine.getQueryResult(40, query);
+    }
+
+    private Query checkType(String type) {
+        switch(type){
+            case MOVIES:
+                return queryProvider.getMatchQuery("titleType", MOVIES);
+            case EPISODE:
+                return queryProvider.getMatchQuery("titleType", EPISODE);
+        }
+        return null;
     }
 
     @Override
