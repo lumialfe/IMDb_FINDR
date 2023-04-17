@@ -60,9 +60,9 @@ public class QueryServiceImpl implements QueryService{
 
     private Query checkType(String type) {
         switch(type){
-            case MOVIES:
+            case "MOVIE":
                 return queryProvider.getMatchQuery("titleType", MOVIES);
-            case EPISODE:
+            case "EPISODE":
                 return queryProvider.getMatchQuery("titleType", EPISODE);
         }
         return null;
