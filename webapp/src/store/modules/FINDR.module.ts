@@ -81,6 +81,22 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
                 ]));
             }
 
+            if (results.length === 0) {
+                results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
+                    ["mustGenres", ""],
+                    ["mustNotGenres", ""],
+                    ["excludeIds", excludedMovies.join(",")],
+                ]));
+            }
+
+            if (results.length === 0) {
+                results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
+                    ["mustGenres", ""],
+                    ["mustNotGenres", ""],
+                    ["excludeIds", ""],
+                ]));
+            }
+
             // Do not show already liked or disliked media
             for (let result of results) {
                 if (state.dislikedMedia.includes(result) || state.likedMedia.includes(result)) {
