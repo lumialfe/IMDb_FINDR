@@ -28,7 +28,10 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
 
         setLikedMedia: (state: State, likedMedia: Media[]) => state.likedMedia = likedMedia,
         addLikedMedia: (state: State, likedMedia: Media) => state.likedMedia.push(likedMedia),
-        removeLikedMedia: (state: State, likedMedia: Media) => state.likedMedia = state.likedMedia.filter((media: Media) => media.id !== likedMedia.id),
+        removeLikedMedia: (state: State, likedMedia: Media) => {
+            state.likedMedia = state.likedMedia.filter((media: Media) => media.id !== likedMedia.id);
+            store.dispatch("FINDR/updateFINDRCardMedia").then(r => r);
+        },
         clearLikedMedia: (state: State) => state.likedMedia = [],
 
         setDislikedMedia: (state: State, dislikedMedia: Media[]) => state.dislikedMedia = dislikedMedia,
@@ -39,9 +42,10 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
         setFINDRMedia: (state: State, FINDRMedia: Media[]) => state.FINDRMedia = FINDRMedia,
         setFINDRCardMedia: (state: State, FINDRCardMedia: Media[]) => state.FINDRCardMedia = FINDRCardMedia,
         addFINDRCardMedia: (state: State, FINDRCardMedia: Media) => state.FINDRCardMedia.push(FINDRCardMedia),
+        removeFINDRCardMedia: (state: State, FINDRCardMedia: Media) => state.FINDRCardMedia = state.FINDRCardMedia.filter((media: Media) => media.id !== FINDRCardMedia.id),
     },
     actions: {
-        async updateFINDRResults({commit, state}): Promise<Media[]> {
+        async updateFINDRResults({commit, state}): Promise<void> {
             store.commit("setResults", []);
 
             let results: Media[] = [];
@@ -80,19 +84,20 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
                 }
             }
 
+
+
             console.log("FINDR DONE");
             //TODO: Fix repeated FINDR media in stack
 
             //commit("setFINDRMedia", results);
             store.commit("setResults", results);
             for (let i = 0; i < results.length; i++) {
-                if (!state.likedMedia.includes(results[i])) {
+                if (!state.FINDRCardMedia.includes(results[i])) {
                     commit("addFINDRCardMedia", results[i]);
-                    break;
+                    return;
                 }
             }
             commit("addFINDRCardMedia", results[0]);
-            return results;
         },
         invertFINDR: ({commit, state}) => {
             commit("setFINDR", !state.FINDR);

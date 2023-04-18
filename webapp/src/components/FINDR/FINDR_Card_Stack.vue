@@ -20,6 +20,7 @@ export default {
   methods: {
     next() {
       this.current++;
+      console.log(this.current);
       store.dispatch("FINDR/updateFINDRResults");
     },
   },

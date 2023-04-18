@@ -20,7 +20,7 @@ export default {
   props: ["media"],
   methods: {
     remove() {
-      this.$store.commit("removeLikedMedia", this.media);
+      this.$store.commit("FINDR/removeLikedMedia", this.media);
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="results-page">
     <TransitionGroup name="list">
-      <MovieCard v-for="media in media" :media="media"/>
+      <MovieCard v-for="(media, index) in media" :media="media" :key="index"/>
     </TransitionGroup>
   </div>
 </template>
