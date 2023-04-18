@@ -23,6 +23,8 @@ export default {
   grid-gap: 1vh 1vw;
   width: 60vw;
   margin: auto;
+  transition: all 0.5s ease;
+
 }
 
 .list-enter-active,
@@ -34,5 +36,12 @@ export default {
 .list-leave-to {
   opacity: 0;
   transform: translateY(100%);
+}
+
+@media only screen and (max-width: 640px) {
+  .results-page {
+    width: 100%;
+    grid-template-columns: 100%;
+  }
 }
 </style>

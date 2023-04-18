@@ -91,13 +91,14 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
 
             //commit("setFINDRMedia", results);
             store.commit("setResults", results);
+
+            // Add first non-repeated result to FINDR stack
             for (let i = 0; i < results.length; i++) {
                 if (!state.FINDRCardMedia.includes(results[i])) {
                     commit("addFINDRCardMedia", results[i]);
                     return;
                 }
             }
-            commit("addFINDRCardMedia", results[0]);
         },
         invertFINDR: ({commit, state}) => {
             commit("setFINDR", !state.FINDR);

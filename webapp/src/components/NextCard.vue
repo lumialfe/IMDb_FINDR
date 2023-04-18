@@ -32,6 +32,7 @@ export default {
   background-color: $main-color;
   margin: auto;
   height: fit-content;
+  width: 100%;
 
   border-radius: 0 .3rem .3rem 0;
 

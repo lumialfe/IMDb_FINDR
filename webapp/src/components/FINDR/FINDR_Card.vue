@@ -192,19 +192,11 @@ export default defineComponent({
 
 @media only screen and (max-width: 640px) {
   .FINDR-card {
-    width: 80vw;
-    min-height: 50vh;
-
     font-size: 90%;
 
-    .card--flip {
-      height: auto;
-
-      .flip--image {
-        .card--image {
-          width: 80vw;
-          height: auto;
-        }
+    .card--info {
+      .card--categories {
+        display: none;
       }
     }
   }

@@ -15,7 +15,8 @@
       <p></p>
       <h4>Up Next</h4>
       <div class="next--cards">
-        <NextCard v-for="(media, index) in this.media.slice(1, 4)" :media="media" :key="media.id" @click="swipeCards(index + 1)"/>
+        <NextCard v-for="(media, index) in this.media.slice(1, 4)" :media="media" :key="media.id"
+                  @click="swipeCards(index + 1)"/>
       </div>
     </div>
   </div>
@@ -58,8 +59,7 @@ export default {
   display: grid;
   grid-template-columns: 65% auto;
   grid-gap: 1vh 1vw;
-  width: 60vw;
-  height: 60vh;
+  min-height: fit-content;
   margin: auto;
 
   .recommended--current {

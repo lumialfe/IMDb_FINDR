@@ -15,7 +15,7 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import {store} from "@/store/store";
-import FINDR_Div from "./FINDR/FINDR_Div.vue";
+import FINDR_Div from "./FINDR_Div.vue";
 
 export default defineComponent({
   computed: {
@@ -39,7 +39,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import "../assets/styles/styles.scss";
+@import "../../assets/styles/styles";
 
 
 .bottom-sheet {
@@ -56,7 +56,8 @@ export default defineComponent({
     width: 90vw;
 
     .bottom-sheet--content {
-      height: 62.5vh;
+      height: 80vh;
+
     }
 
     .bottom-sheet--button {

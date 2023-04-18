@@ -1,6 +1,6 @@
 <!--suppress JSUnusedGlobalSymbols -->
 <script lang="ts">
-import BottomSheet from "@/components/BottomSheet.vue";
+import BottomSheet from "@/components/FINDR/BottomSheet.vue";
 import {defineComponent} from "vue";
 import {store} from "@/store/store";
 import Header from "@/components/Header.vue";
