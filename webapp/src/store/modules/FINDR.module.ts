@@ -68,32 +68,35 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
             let params = new Map<string, string>([
                 ["mustGenres", mustGenres.join(",")],
                 ["mustNotGenres", mustNotGenres.join(",")],
-                ["excludeIds", excludedMovies.join(",")],
+                ["excludedIds", excludedMovies.join(",")],
             ]);
 
             results = await myFetch(endpoints.API_GENRES, params);
 
+            // If no results are found, try again with a less strict search
             if (results.length === 0) {
                 results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
                     ["mustGenres", mustGenres.join(",")],
                     ["mustNotGenres", ""],
-                    ["excludeIds", excludedMovies.join(",")],
+                    ["excludedIds", excludedMovies.join(",")],
                 ]));
             }
 
+            // If no results are found, try again with a less strict search
             if (results.length === 0) {
                 results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
                     ["mustGenres", ""],
                     ["mustNotGenres", ""],
-                    ["excludeIds", excludedMovies.join(",")],
+                    ["excludedIds", excludedMovies.join(",")],
                 ]));
             }
 
+            // If no results are found, try again with a less strict search
             if (results.length === 0) {
                 results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
                     ["mustGenres", ""],
                     ["mustNotGenres", ""],
-                    ["excludeIds", ""],
+                    ["excludedIds", ""],
                 ]));
             }
 
