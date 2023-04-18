@@ -70,10 +70,12 @@ public interface QueryService {
     /**
      * Returns the movies that contains the mustGenres and do not contain the
      * mustNotGenres
+     *
      * @param mustGenres
      * @param mustNotGenres
+     * @param excludedIds
      * @return List of movies
      * @throws IOException
      */
-    List<Movie> getFilmsByGenres(String[] mustGenres, String[] mustNotGenres) throws IOException;
+    List<Movie> getFilmsByGenres(String[] mustGenres, String[] mustNotGenres, String[] excludedIds) throws IOException;
 }
