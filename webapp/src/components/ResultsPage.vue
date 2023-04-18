@@ -19,8 +19,8 @@ export default {
 <style scoped lang="scss">
 .results-page {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-gap: 1vh 1vw;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 5vh 1vw;
   width: 60vw;
   margin: auto;
   transition: all 0.5s ease;
