@@ -19,8 +19,8 @@ export default {
   name: "FINDR_Card_Stack",
   methods: {
     next() {
+      //store.commit("FINDR/removeFINDRCardMedia", this.media[this.current]);
       this.current++;
-      console.log(this.current);
       store.dispatch("FINDR/updateFINDRResults");
     },
   },

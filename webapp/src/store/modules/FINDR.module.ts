@@ -54,7 +54,7 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
             let weights = weightFINDRChoices(state.likedMedia, state.dislikedMedia);
             let i: number = 0;
             for (let [key, value] of weights) {
-                if (i < 3 && value > 0.5) {
+                if (i < 3 && value) {
                     let aux = await myFetch(
                         endpoints.API_FILTERS,
                         new Map<string, string>([
@@ -80,11 +80,9 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
 
             for (let result of results) {
                 if (state.dislikedMedia.includes(result)) {
-                    results.splice(results.indexOf(result), 1);
+                    results = results.filter((media: Media) => media.id !== result.id);
                 }
             }
-
-
 
             console.log("FINDR DONE");
             //TODO: Fix repeated FINDR media in stack
@@ -98,6 +96,10 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
                     commit("addFINDRCardMedia", results[i]);
                     return;
                 }
+            }
+
+            if (state.FINDRCardMedia.length <= 0) {
+                store.commit("addFINDRCardMedia", store.getters["getTopAllTime"][Math.floor(Math.random() * store.getters["getTopAllTime"].length)]);
             }
         },
         invertFINDR: ({commit, state}) => {
