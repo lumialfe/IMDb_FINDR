@@ -1,5 +1,6 @@
 package org.imdb.repositories;
 
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -31,6 +33,10 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
         this.elasticSearchConfig = elasticSearchConfig;
     }
 
+    /**
+     * Created the index specifying its mapping
+     * @param input Mapping
+     */
     @Override
     public void createIndex(InputStream input) {
         try {
@@ -49,6 +55,10 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
 
     private int counter = 0;
 
+    /**
+     * Index a list of movies into elasticsearch
+     * @param movies
+     */
     @Override
     public void indexDocuments(List<Movie> movies){
         if(!movies.isEmpty()){
@@ -76,6 +86,10 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
         }
     }
 
+    /**
+     * Returns the documents indexed (default 10 documents)
+     * @return
+     */
     @Override
     public List<Movie> getDocuments() {
         SearchRequest searchRequest =  SearchRequest.of(s -> s.index
@@ -99,6 +113,10 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
         return movies;
     }
 
+    /**
+     * Deletes the index specified by its name
+     * @param indexName Index name
+     */
     @Override
     public void deleteIndex(String indexName) {
         try{
@@ -117,6 +135,11 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
         }
     }
 
+    /**
+     * Returns the information about the index
+     *
+     * @return
+     */
     @Override
     public GetIndexResponse getIndexes() {
         try {
@@ -131,7 +154,14 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
         return null;
     }
 
-
+    /**
+     * Returns the list of movies found by the query
+     *
+     * @param size of the list
+     * @param query that will search for the movies
+     * @return List of movies
+     * @throws IOException
+     */
     @Override
     public List<Movie> getQueryResult(int size, Query query) throws IOException {
 
@@ -141,6 +171,39 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
                                 .index(INDEX)
                                 .query(query)
                                 .size(size),
+                        Movie.class);
+
+        List<Hit<Movie>> hits = searchResponse.hits().hits();
+        List<Movie> movies = new ArrayList<>();
+
+        for(Hit<Movie> hit : hits){
+            movies.add(hit.source());
+        }
+        return movies;
+    }
+
+    /**
+     * Returns the list of movies found aggregated by a field
+     *
+     * @param size of the list
+     * @param query that will search for the movies
+     * @param aggregations
+     * @return List of movies
+     * @throws IOException
+     */
+    @Override
+    public List<Movie> getQueryResult(int size, Query query, HashMap<String,
+            Aggregation> aggregations)
+    throws IOException {
+
+
+        SearchResponse searchResponse =
+                elasticSearchConfig.getElasticClient().search(i -> i
+                                .index(INDEX)
+                                .query(query)
+                                .size(size)
+                                .aggregations("genres", aggregations.get(
+                                        "genres")),
                         Movie.class);
 
         List<Hit<Movie>> hits = searchResponse.hits().hits();

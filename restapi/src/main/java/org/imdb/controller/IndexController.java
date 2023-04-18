@@ -66,17 +66,6 @@ public class IndexController {
         }
     }*/
 
-    @Operation(description = "Given a movie it is indexed", responses = {
-            @ApiResponse(responseCode = "200", description = "Movie indexed " +
-                    "succesfully")
-    })
-    @PostMapping("/_doc")
-    public ResponseEntity indexDocument(@Parameter(description = "Movie to be" +
-            " indexed", required = true)@RequestBody Movie movie){
-        imdbService.indexDocument(movie);
-        return ResponseEntity.ok().build();
-    }
-
     @Operation(description = "Deletes the index",
             responses = {
             @ApiResponse(responseCode = "200", description = "Index deleted " +
