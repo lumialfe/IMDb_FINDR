@@ -2,9 +2,11 @@ package org.imdb.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.imdb.model.Movie;
 import org.imdb.service.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -26,7 +27,11 @@ public class QueryController {
         this.queryService = queryService;
     }
 
-    @Operation(description = "Returns the movies in a range")
+    @Operation(description = "Returns the movies in a range", responses = {
+            @ApiResponse(responseCode = "202", description = "Movies have " +
+                    "been found"),
+            @ApiResponse(responseCode = "404", description = "Movies were not" +
+                    " found")})
     @GetMapping("/_search/range")
     public ResponseEntity<List<Movie>> getRangedMovies(@Parameter(description =
             "From which number of movie to search", required = true)@RequestParam int from
@@ -35,12 +40,16 @@ public class QueryController {
         try {
             return ResponseEntity.ok(queryService.getRangedMovies(from, size));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @Operation(description = "Returns the movies found that match part of the" +
-            " title and correspond to the applied filter")
+            " title and correspond to the applied filter", responses = {
+            @ApiResponse(responseCode = "202", description = "Movies have " +
+                    "been found"),
+            @ApiResponse(responseCode = "404", description = "Movies were not" +
+                    " found")})
     @GetMapping("/_search/title")
     public ResponseEntity<List<Movie>> getMoviesByTitle(@Parameter(description =
             "Text to search for the movie", required = true)@RequestParam String title,
@@ -49,11 +58,15 @@ public class QueryController {
         try {
             return ResponseEntity.ok(queryService.getMoviesByTitle(title, type));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    @Operation(description = "Returns the recommeded movies in a specific year")
+    @Operation(description = "Returns the recommeded movies in a specific year", responses = {
+            @ApiResponse(responseCode = "202", description = "Movies have " +
+                    "been found"),
+            @ApiResponse(responseCode = "404", description = "Movies were not" +
+                    " found")})
     @GetMapping("/_search/recommended")
     public ResponseEntity<List<Movie>> getRecommended(@Parameter(description
             = "Year of the film", required = true) int year, @Parameter(description
@@ -61,11 +74,16 @@ public class QueryController {
         try {
             return ResponseEntity.ok(queryService.getRecommended(year, size));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-
+    @Operation(description = "Returns the movies filtered by year, " +
+            "runtimeMin, avgRating, type and genre", responses = {
+            @ApiResponse(responseCode = "202", description = "Movies have " +
+                    "been found"),
+            @ApiResponse(responseCode = "404", description = "Movies were not" +
+                    " found")})
     @GetMapping("/_search")
     public ResponseEntity<List<Movie>> getMoviesFiltered(@RequestParam int minYear,
                                                          @RequestParam int maxYear,
@@ -82,27 +100,40 @@ public class QueryController {
                     maxYear, maxRuntimeMin, minRuntimeMin, minAvgRating,
                     maxAvgRating, type, genres));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
+    @Operation(description = "Returns the movies that you must NOT watch",
+            responses = {
+            @ApiResponse(responseCode = "202", description = "Movies have " +
+                    "been found"),
+            @ApiResponse(responseCode = "404", description = "Movies were not" +
+                    " found")})
     @GetMapping("/_search/not-to-watch")
     public ResponseEntity<List<Movie>> getNotToWatchMovies(){
         try {
             return ResponseEntity.ok(queryService.getNotToWatchMovies());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
+    @Operation(description = "Returns the all times recommended movies",
+            responses = {
+            @ApiResponse(responseCode = "202", description = "Movies have " +
+                    "been found"),
+            @ApiResponse(responseCode = "404", description = "Movies were not" +
+                    " found")})
     @GetMapping("_search/recommended-all-times")
     public ResponseEntity<List<Movie>> getAllTimesRecommended(){
         try {
             return ResponseEntity.ok(queryService.getAllTimesRecommended());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
 
 
 }

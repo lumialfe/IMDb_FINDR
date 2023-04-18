@@ -27,6 +27,16 @@ public class ImdbServiceImpl implements ImdbService{
         this.elasticsearchEngine = elasticsearchEngine;
     }
 
+    /**
+     * Uploads and process the corresponding files with the data sets of imdb
+     *
+     * @param basics
+     * @param akas
+     * @param ratings
+     * @param crew
+     * @param participants
+     * @throws IOException
+     */
     @Async
     @Override
     public void uploadFiles(MultipartFile basics, MultipartFile akas,
@@ -66,6 +76,11 @@ public class ImdbServiceImpl implements ImdbService{
         }
     }
 
+    /**
+     * Creates the index with its corresponding mapping
+     *
+     * @throws IOException
+     */
     @Override
     public void createIndex() throws IOException {
         InputStream input = new ClassPathResource("static" +
@@ -73,21 +88,29 @@ public class ImdbServiceImpl implements ImdbService{
         elasticsearchEngine.createIndex(input);
     }
 
-    @Override
-    public void indexDocument(Movie movie) {
-
-    }
-
+    /**
+     * Returns the documents indexed (default 10 documents)
+     * @return
+     */
     @Override
     public List<Movie> getDocuments() {
         return elasticsearchEngine.getDocuments();
     }
 
+    /**
+     * Deletes the index specified by its name
+     * @param indexName Index name
+     */
     @Override
     public void deleteIndex(String indexName) {
         elasticsearchEngine.deleteIndex(indexName);
     }
 
+    /**
+     * Returns the information about the index
+     *
+     * @return
+     */
     @Override
     public GetIndexResponse getIndixes() {
         return elasticsearchEngine.getIndexes();
