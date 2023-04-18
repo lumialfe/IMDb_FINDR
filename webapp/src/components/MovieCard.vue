@@ -65,30 +65,27 @@ export default {
   transition: all 0.3s ease-in-out;
 
   &:hover {
-    transition: all 0.3s ease-in-out;
-    background-color: $main-color;
-    width: 270px;
-
     .movie-card--info {
       .info--title {
-        transition: all 0.3s ease-in-out;
         display: none;
       }
 
       .info--rating {
-        transition: all 0.3s ease-in-out;
         display: none;
       }
 
       .info--trailer {
         a {
           .info--trailer-button {
-            transition: all 0.3s ease-in-out;
             color: $accent-color;
           }
         }
       }
     }
+
+    transition: all 0.3s ease-in-out;
+    background-color: $main-color;
+    width: 270px;
   }
 
   .movie-card--image {
