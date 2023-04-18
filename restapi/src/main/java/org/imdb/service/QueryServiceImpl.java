@@ -189,4 +189,27 @@ public class QueryServiceImpl implements QueryService{
         return elasticsearchEngine.getQueryResult(20, query);
     }
 
+    /**
+     * Returns the movies that contains the mustGenres and do not contain the
+     * mustNotGenres
+     * @param mustGenres
+     * @param mustNotGenres
+     * @return List of movies
+     * @throws IOException
+     */
+    @Override
+    public List<Movie> getFilmsByGenres(String[] mustGenres, String[] mustNotGenres) throws IOException {
+        List<Query> queries = new ArrayList<>();
+        if(mustGenres.length > 0){
+            queries.add(queryProvider.getTermQuery("genres", mustGenres));
+        }
+
+        queries.add(queryProvider.getMinNumOfVotes(300000));
+
+        Query query =
+                BoolQuery.of(b -> b.must(queries).mustNot(queryProvider.getTermQuery("genres", mustNotGenres)))._toQuery();
+
+        return elasticsearchEngine.getQueryResult(20, query, queryProvider.getAggregations());
+    }
+
 }

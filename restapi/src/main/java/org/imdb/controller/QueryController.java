@@ -52,7 +52,7 @@ public class QueryController {
                     " found")})
     @GetMapping("/_search/title")
     public ResponseEntity<List<Movie>> getMoviesByTitle(@Parameter(description =
-            "Text to search for the movie", required = true)@RequestParam String title,
+            "Text to search for the movie", required = true)@RequestParam String title, @Parameter(description = "Type to be searched MOVIE, EPISODE, ALL", required = true)
                                                         @RequestParam String type){
 
         try {
@@ -133,6 +133,27 @@ public class QueryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @Operation(description = "Returns the movies that contains the genres " +
+            "specified and do not contains the specified",
+            responses = {
+                    @ApiResponse(responseCode = "202", description = "Movies have " +
+                            "been found"),
+                    @ApiResponse(responseCode = "404", description = "Movies were not" +
+                            " found")})
+    @GetMapping("_search/genres")
+    public ResponseEntity<List<Movie>> getFilmsByGenres(@Parameter(description = "Genres that must appear in the movies", required = true)
+                                                            @RequestParam String[] mustGenres,
+                                                        @Parameter(description = "Genres that must not appear in the movies", required = true)
+                                                        @RequestParam String[] mustNotGenres){
+        try{
+            return ResponseEntity.ok(queryService.getFilmsByGenres(mustGenres
+                    , mustNotGenres));
+        }catch(IOException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
 
 
 

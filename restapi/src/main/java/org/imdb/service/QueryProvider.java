@@ -109,6 +109,7 @@ public class QueryProvider {
         TermsQueryField terms = new TermsQueryField.Builder()
                 .value(Arrays.asList(values).stream().map(FieldValue::of).toList())
                 .build();
+
         return TermsQuery.of(t -> t.field(field).terms(terms)
         )._toQuery();
     }
