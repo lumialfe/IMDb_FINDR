@@ -66,14 +66,6 @@ export default {
 
       .info--title--link {
         color: $title-color;
-
-        &:hover {
-          text-decoration: underline $link-color 2px;
-        }
-
-        &:active {
-          opacity: 70%;
-        }
       }
     }
 
