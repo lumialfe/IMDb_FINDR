@@ -73,10 +73,12 @@ export default {
       width: 100%;
       background: none;
       transition: font-size 0.3s;
+      transition: all 0.3s ease-in-out;
+
 
       &:hover {
         font-size: 200%;
-        transition: font-size 0.3s;
+        transition: all 0.3s ease-in-out;
       }
     }
 

@@ -35,8 +35,13 @@ export default {
 
   border-radius: 0 .3rem .3rem 0;
 
+  transition: all 0.3s ease-in-out;
+
+
   &:hover {
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    transform: scale(1.1);
   }
 
   .movie-card--image {
