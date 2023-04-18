@@ -64,6 +64,7 @@ export default {
   display: grid;
   width: 60vw;
   margin: auto;
+  min-height: 100vh;
 }
 
 @media only screen and (max-width: 640px) {

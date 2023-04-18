@@ -28,6 +28,9 @@ footer {
   margin-top: 2rem;
   width: 100%;
 
+  position: relative;
+  bottom: 0;
+
   .footer--content {
     display: grid;
     grid-template-columns: 50% 50%;

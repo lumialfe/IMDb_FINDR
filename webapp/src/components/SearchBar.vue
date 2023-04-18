@@ -6,6 +6,7 @@
       <option class="searchbar--filter" value="EPISODE">Series</option>
     </select>
     <input class="searchbar--input" type="text" placeholder="Search IMDb..." autofocus id="media-query"
+           @focusout="reset()"
            v-on:input="store.dispatch('search')"/>
   </div>
 </template>
@@ -18,6 +19,11 @@ export default {
   computed: {
     store() {
       return store
+    }
+  },
+  methods: {
+    reset() {
+      (document.getElementById("media-query") as HTMLInputElement).style.border = "none";
     }
   }
 }

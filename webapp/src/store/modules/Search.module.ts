@@ -86,6 +86,11 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
                 if (query.length > 2) {
                     console.log("searching " + type + ": " + query);
                     let results: Media[] = await fetchByTitle(query, type);
+                    if (results.length === 0) {
+                        (document.getElementById("media-query") as HTMLInputElement).style.border = "2px solid red";
+                    } else {
+                        (document.getElementById("media-query") as HTMLInputElement).style.border = "none";
+                    }
                     commit("setResults", results);
                 } else {
                     commit("setResults", []);
