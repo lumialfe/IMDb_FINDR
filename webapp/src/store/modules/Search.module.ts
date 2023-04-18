@@ -75,7 +75,6 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
             commit("setTopAllTime", topAllTimeMedia);
             commit("setNotToWatch", notToWatchMedia);
             commit("FINDR/addFINDRCardMedia", trendingMedia[0], {root: true});
-            commit("FINDR/addFINDRCardMedia", trendingMedia[1], {root: true});
         },
         async search({commit}): Promise<void> {
             let dropdown: HTMLSelectElement = (document.getElementById("media-type") as HTMLSelectElement);
@@ -86,11 +85,25 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
                 if (query.length > 2) {
                     console.log("searching " + type + ": " + query);
                     let results: Media[] = await fetchByTitle(query, type);
+
+                    // Sort results by year and rating
+                    results.sort((a, b) => {
+                        if (b.startYear == a.startYear) {
+                            return b.averageRating - a.averageRating;
+                        }
+                        return b.startYear - a.startYear;
+                    });
+
                     if (results.length === 0) {
                         (document.getElementById("media-query") as HTMLInputElement).style.border = "2px solid red";
                     } else {
                         (document.getElementById("media-query") as HTMLInputElement).style.border = "none";
+
+                        // Set the first result as the FINDR card media
+                        commit("FINDR/setFINDRCardMedia", [], {root: true});
+                        commit("FINDR/addFINDRCardMedia", results[0], {root: true});
                     }
+
                     commit("setResults", results);
                 } else {
                     commit("setResults", []);

@@ -46,61 +46,67 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
     },
     actions: {
         async updateFINDRResults({commit, state}): Promise<void> {
-            store.commit("setResults", []);
-
+            store.commit("setResults", []) //Reset results
             let results: Media[] = [];
-            // Calculate weights for each media type
-            console.log("STARTING FINDR");
-            let weights = weightFINDRChoices(state.likedMedia, state.dislikedMedia);
-            let i: number = 0;
-            for (let [key, value] of weights) {
-                if (i < 3 && value) {
-                    let aux = await myFetch(
-                        endpoints.API_FILTERS,
-                        new Map<string, string>([
-                            ["minYear", "0"],
-                            ["maxYear", "0"],
-                            ["maxRuntimeMin", "0"],
-                            ["minRuntimeMin", "0"],
-                            ["minAvgRating", "0"],
-                            ["maxAvgRating", "0"],
-                            ["type", "movie"],
-                            ["genres", [key].toString()],
 
-                        ]));
-                    aux.sort((a: Media, b: Media) => b.averageRating - a.averageRating);
-                    results = results.concat(aux.slice(0, (3 - i) * 5));
-                    i++;
+            let weights = weightFINDRChoices(state.likedMedia, state.dislikedMedia);
+            let mustGenres = [];
+            let mustNotGenres = [];
+            for (let [key, value] of weights) {
+                if (value >= .5) {
+                    mustGenres.push(key);
                 } else {
+                    mustNotGenres.push(key);
+                }
+            }
+
+            // Do not show already liked or disliked media
+            let excludedMovies: string[] = [];
+            excludedMovies.push(...state.likedMedia.map((media: Media) => media.id));
+            excludedMovies.push(...state.dislikedMedia.map((media: Media) => media.id));
+
+            let params = new Map<string, string>([
+                ["mustGenres", mustGenres.join(",")],
+                ["mustNotGenres", mustNotGenres.join(",")],
+                ["excludeIds", excludedMovies.join(",")],
+            ]);
+
+            results = await myFetch(endpoints.API_GENRES, params);
+
+            if (results.length === 0) {
+                results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
+                    ["mustGenres", mustGenres.join(",")],
+                    ["mustNotGenres", ""],
+                    ["excludeIds", excludedMovies.join(",")],
+                ]));
+            }
+
+            // Do not show already liked or disliked media
+            for (let result of results) {
+                if (state.dislikedMedia.includes(result) || state.likedMedia.includes(result)) {
+                    results.splice(results.indexOf(result), 1);
+                }
+            }
+
+            // Sort results by year and rating
+            results.sort((a, b) => {
+                if (b.startYear == a.startYear) {
+                    return b.averageRating - a.averageRating;
+                }
+                return b.startYear - a.startYear;
+            });
+
+            // Add one of the results to FINDR Stack
+            for (let result of results) {
+                if (!(state.FINDRCardMedia.includes(result))) {
+                    state.FINDRCardMedia.push(result);
                     break;
                 }
             }
-            console.log(weights);
+
             console.log(results);
 
-            for (let result of results) {
-                if (state.dislikedMedia.includes(result)) {
-                    results = results.filter((media: Media) => media.id !== result.id);
-                }
-            }
-
-            console.log("FINDR DONE");
-            //TODO: Fix repeated FINDR media in stack
-
-            //commit("setFINDRMedia", results);
             store.commit("setResults", results);
-
-            // Add first non-repeated result to FINDR stack
-            for (let i = 0; i < results.length; i++) {
-                if (!state.FINDRCardMedia.includes(results[i])) {
-                    commit("addFINDRCardMedia", results[i]);
-                    return;
-                }
-            }
-
-            if (state.FINDRCardMedia.length <= 0) {
-                store.commit("addFINDRCardMedia", store.getters["getTopAllTime"][Math.floor(Math.random() * store.getters["getTopAllTime"].length)]);
-            }
         },
         invertFINDR: ({commit, state}) => {
             commit("setFINDR", !state.FINDR);
