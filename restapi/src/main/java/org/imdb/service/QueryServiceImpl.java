@@ -58,7 +58,6 @@ public class QueryServiceImpl implements QueryService{
             queries.add(typeQ);
         }
         queries.add(queryProvider.getRangedQuery("avgRating", 3.0));
-        queries.add(queryProvider.getMinNumOfVotes(50000));
 
         Query query =
                 BoolQuery.of(q -> q.must(queries).mustNot(queryProvider.getMatchQuery(
