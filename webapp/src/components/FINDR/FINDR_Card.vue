@@ -5,7 +5,7 @@
         <Transition name="fade">
           <div class="card--flip" v-on:mouseenter="changeInfo()" v-on:mouseleave="changeInfo()">
             <div class="flip--image">
-              <img loading="lazy" v-if="this.media.backdropPath == null" src="../../assets/media/missing_img.jpeg"
+              <img loading="lazy" v-if="media.backdropPath.includes('undefined')"  src="../../assets/media/missing_img.jpeg"
                    alt="Card image"
                    class="card--image"/>
               <img loading="lazy" v-else v-bind:src="this.media.backdropPath"

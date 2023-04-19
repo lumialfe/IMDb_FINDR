@@ -2,7 +2,9 @@
   <div class="FINDR-choice">
     <div class="FINDR-choice--content">
       <div class="FINDR-choice--content--image">
-        <img :src="media.backdropPath" alt="media image">
+        <img v-if="media.backdropPath.includes('undefined')" src="../../assets/media/missing_img.jpeg"
+             alt="media image">
+        <img v-else :src="media.backdropPath" alt="media image">
       </div>
       <div class="FINDR-choice--content--text">
         <h3>{{ media.title }}</h3>
@@ -48,6 +50,7 @@ export default {
       display: grid;
       grid-template-columns: 90% 10%;
       align-content: center;
+
       .card--button {
         margin: auto;
         padding: 0;
@@ -74,6 +77,7 @@ export default {
   .FINDR-choice {
     max-width: 50%;
     font-size: 50%;
+
     img {
       width: 100%;
     }
