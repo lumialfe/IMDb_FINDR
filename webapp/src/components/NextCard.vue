@@ -34,6 +34,8 @@ export default {
   height: fit-content;
   width: 100%;
 
+  font-size: 90%;
+
   border-radius: 0 .3rem .3rem 0;
 
   transition: all 0.3s ease-in-out;
