@@ -4,6 +4,7 @@ import type {ComponentCustomProperties} from "@/store/util";
 import {endpoints} from "@/store/endpoints";
 import {myFetch} from "@/store/util";
 import {store} from "@/store/store";
+import {map} from "@/store/util";
 
 export const FINDRModule: Module<State, ComponentCustomProperties> = {
     namespaced: true,
@@ -66,10 +67,12 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
             excludedMovies.push(...state.dislikedMedia.map((media: Media) => media.id));
 
             let params = new Map<string, string>([
-                ["mustGenres", mustGenres.join(",")],
-                ["mustNotGenres", mustNotGenres.join(",")],
+                ["mustGenres", mustGenres.slice(0, 2).join(",")],
+                ["mustNotGenres", mustNotGenres.slice(0, 2).join(",")],
                 ["excludedIds", excludedMovies.join(",")],
             ]);
+
+            console.log(params);
 
             results = await myFetch(endpoints.API_GENRES, params);
 
@@ -107,8 +110,6 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
                 }
             }
 
-            console.log(results);
-
             store.commit("setResults", results);
         },
         invertFINDR: ({commit, state}) => {
@@ -140,7 +141,7 @@ function weightProperty(liked: Media[], disliked: Media[], properties: string, p
                 // @ts-ignore
                 weights.set(property, weights.get(property) * positiveWeight); //Do not change it
             } else {
-                weights.set(property, .75);
+                weights.set(property, 1);
             }
         }
     }
@@ -157,21 +158,20 @@ function weightProperty(liked: Media[], disliked: Media[], properties: string, p
         }
     }
 
-    const sortedWeights = new Map([...weights.entries()].sort((a, b) => b[1] - a[1]));
+    const sortedWeights: Map<string, number> = new Map([...weights.entries()].sort((a, b) => b[1] - a[1]));
 
     let max = Math.max(...sortedWeights.values());
     let min = Math.min(...sortedWeights.values());
 
-    Object.keys(sortedWeights).forEach(function (key) {
-        // @ts-ignore
-        sortedWeights[key] = map(sortedWeights[key], min, max, 0, 1);
+    Object.keys(sortedWeights).forEach(function (key: string) {
+        sortedWeights.set(key, map(sortedWeights.get(key) as number, min, max, 0, 1));
     });
 
     return sortedWeights;
 }
 
 function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number> {
-    let genreWeights = weightProperty(liked, disliked, "genres", "genre", 1, .9);
+    let genreWeights = weightProperty(liked, disliked, "genres", "genre", 1.5, .75);
 
     //TODO: In the future, we can add more properties to weight.
     //let typeWeights = weightProperty(liked, disliked, "types", "type", 1.1, .9);
@@ -179,5 +179,6 @@ function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, numb
     //let starringWeights = weightProperty(liked, disliked, "starring", "starring", 1.1, .9)
     //return [genreWeights, typeWeights, directorWeights, starringWeights];
 
+    console.log(genreWeights);
     return genreWeights;
 }

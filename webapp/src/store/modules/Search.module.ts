@@ -86,13 +86,15 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
                     console.log("searching " + type + ": " + query);
                     let results: Media[] = await fetchByTitle(query, type);
 
-                    // Sort results by year and rating
-                    results.sort((a, b) => {
-                        if (b.startYear == a.startYear) {
-                            return b.averageRating - a.averageRating;
+                    // Re-sort results with undefined or null poster paths
+                    let resultsWOImages: Media[] = [];
+                    results.forEach((media: Media) => {
+                        let flag: boolean|undefined = (media.posterPath?.includes("undefined") || media.posterPath?.includes("null"));
+                        if (flag) {
+                            resultsWOImages.push(results.splice(results.indexOf(media), 1)[0]);
                         }
-                        return b.startYear - a.startYear;
                     });
+                    results.push(...resultsWOImages);
 
                     if (results.length === 0) {
                         (document.getElementById("media-query") as HTMLInputElement).style.border = "2px solid red";
