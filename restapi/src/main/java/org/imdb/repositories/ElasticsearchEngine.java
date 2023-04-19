@@ -18,7 +18,7 @@ public interface ElasticsearchEngine {
      * Created the index specifying its mapping
      * @param input Mapping
      */
-    void createIndex(InputStream input);
+    void createIndex(InputStream input, InputStream settings);
 
     /**
      * Index a list of movies into elasticsearch

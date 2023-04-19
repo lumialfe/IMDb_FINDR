@@ -1,6 +1,7 @@
 package org.imdb.repositories;
 
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
+import co.elastic.clients.elasticsearch._types.analysis.Analyzer;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
@@ -11,6 +12,8 @@ import co.elastic.clients.elasticsearch.indices.CreateIndexResponse;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
 import co.elastic.clients.elasticsearch.indices.GetIndexResponse;
 import co.elastic.clients.elasticsearch.indices.IndexState;
+import co.elastic.clients.json.DelegatingDeserializer;
+import co.elastic.clients.json.ObjectDeserializer;
 import org.imdb.configuration.ElasticSearchConfig;
 import org.imdb.model.Movie;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +41,16 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
      * @param input Mapping
      */
     @Override
-    public void createIndex(InputStream input) {
+    public void createIndex(InputStream input, InputStream settings) {
         try {
-            CreateIndexResponse cir =
-                    elasticSearchConfig.getElasticClient().indices().create(b
-                            -> b.index(
-                            INDEX).withJson(input));
-            if(cir.acknowledged()){
-                System.out.println("indexed");
-            }
+
+            elasticSearchConfig.getElasticClient().indices().create(i -> i.index(INDEX));
+            elasticSearchConfig.getElasticClient().indices().close(c -> c.index(INDEX));
+            ObjectDeserializer unwrapped = (ObjectDeserializer) DelegatingDeserializer.unwrap(Analyzer._DESERIALIZER );
+            unwrapped.setTypeProperty("type", "standard");
+            elasticSearchConfig.getElasticClient().indices().putSettings(s -> s.index(INDEX).withJson(settings));
+            elasticSearchConfig.getElasticClient().indices().open(o -> o.index(INDEX));
+            elasticSearchConfig.getElasticClient().indices().putMapping(m -> m.index(INDEX).withJson(input));
 
         }catch(IOException e){
             System.out.println("error");
@@ -108,7 +112,7 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
             }
             return movies;
         }catch(IOException e){
-            System.out.println("error");
+            System.out.println("Couldn't be found");
         }
         return movies;
     }
@@ -164,8 +168,6 @@ public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
      */
     @Override
     public List<Movie> getQueryResult(int size, Query query) throws IOException {
-
-
         SearchResponse searchResponse =
                 elasticSearchConfig.getElasticClient().search(i -> i
                                 .index(INDEX)

@@ -85,7 +85,9 @@ public class ImdbServiceImpl implements ImdbService{
     public void createIndex() throws IOException {
         InputStream input = new ClassPathResource("static" +
                 "/movieMapping.json").getInputStream();
-        elasticsearchEngine.createIndex(input);
+        InputStream settings = new ClassPathResource("static"+
+                "/custom_analyzer.json").getInputStream();
+        elasticsearchEngine.createIndex(input, settings);
     }
 
     /**
