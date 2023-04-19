@@ -91,22 +91,6 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
                 ]));
             }
 
-            // If no results are found, try again with a less strict search
-            if (results.length === 0) {
-                results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
-                    ["mustGenres", ""],
-                    ["mustNotGenres", ""],
-                    ["excludedIds", ""],
-                ]));
-            }
-
-            // Do not show already liked or disliked media
-            for (let result of results) {
-                if (state.dislikedMedia.includes(result) || state.likedMedia.includes(result)) {
-                    results.splice(results.indexOf(result), 1);
-                }
-            }
-
             // Sort results by year and rating
             results.sort((a, b) => {
                 if (b.startYear == a.startYear) {

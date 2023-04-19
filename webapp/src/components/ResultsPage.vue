@@ -1,4 +1,5 @@
 <template>
+  <h1>Results</h1>
   <div class="results-page">
     <TransitionGroup name="list">
       <MovieCard v-for="(media, index) in media" :media="media" :key="index"/>

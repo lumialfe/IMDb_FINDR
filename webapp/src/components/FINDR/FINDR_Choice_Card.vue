@@ -72,7 +72,7 @@ export default {
 
 @media only screen and (max-width: 640px) {
   .FINDR-choice {
-    width: 50vw;
+    max-width: 50%;
     font-size: 50%;
     img {
       width: 100%;
