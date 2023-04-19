@@ -35,8 +35,7 @@ you or your company do not control.
 
 |          | Positive                                                                                                                                                                                  | Negative                                                                                           |
 |----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
-| Internal | Creativity                                                                                                                                                                                | Lack of experience in the sector                                                                   
-|
+| Internal | Creativity                                                                                                                                                                                | Lack of experience in the sector                                                                   |
 | External | Increasing number of streaming services<br/><br/>Exceed offer of films and tv series. Nowadays there are new things to watch constantly, which increases the uncertainty of what to watch | Competitors<br/><br/>People already know what to watch before even entering the streaming platform |
 
 ## Preview
