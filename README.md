@@ -157,3 +157,10 @@ npm run lint
   6. `GET /imdb/_search/recommended-all-times`
   
     This endpoint is used to search the all times recommended movies with a good rating.
+    
+  7. `GET /imdb/_search/genres`
+  
+    Parameters:
+    - mustGenres -> String array which has the genres that must contain the movies to be searched.
+    - mustNotGenres -> String array which has the gernes that must not contain the movies to be searched.
+    - excludedIds -> String array which has the movies ids that must not be searched.
