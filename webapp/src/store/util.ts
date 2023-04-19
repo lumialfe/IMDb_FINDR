@@ -35,8 +35,6 @@ export interface ComponentCustomProperties {
 }
 
 export const movieTypes = ["short", "movie", "tvMovie", "tvShort"];
-export const tvTypes = ["tvSeries", "tvMiniSeries", "tvSpecial"];
-
 
 export async function myFetch(endpoint: string, params?: Map<string, string>): Promise<Media[]> {
     let url = endpoint;

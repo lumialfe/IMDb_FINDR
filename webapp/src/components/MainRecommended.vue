@@ -72,7 +72,6 @@ export default {
       height: 100%;
       width: 100%;
       background: none;
-      transition: font-size 0.3s;
       transition: all 0.3s ease-in-out;
 
 
