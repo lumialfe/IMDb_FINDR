@@ -16,10 +16,11 @@ public class QueryServiceImpl implements QueryService{
     private final ElasticsearchEngine elasticsearchEngine;
     private QueryProvider queryProvider = new QueryProvider();
 
-    private static final String NOT_MATCH_MOVIES = " tvEpisode, video, " +
-            "videoGame, tvPilot";
-    private static final String MOVIES = "short, movie, tvMovie, tvShort";
-    private static final String EPISODE = "tvSeries, tvMiniSeries, tvSpecial";
+    private static final String[] NOT_MATCH_MOVIES = {"tvEpisode", "video",
+            "videoGame", "tvPilot"};
+    private static final String[] MOVIES = {"short", "movie", "tvMovie", "tvShort"};
+    private static final String[] EPISODE = {"tvSeries", "tvMiniSeries",
+            "tvSpecial"};
 
     @Autowired
     public QueryServiceImpl(ElasticsearchEngine elasticsearchEngine) {
@@ -60,7 +61,7 @@ public class QueryServiceImpl implements QueryService{
         queries.add(queryProvider.getRangedQuery("avgRating", 3.0));
 
         Query query =
-                BoolQuery.of(q -> q.must(queries).mustNot(queryProvider.getMatchQuery(
+                BoolQuery.of(q -> q.must(queries).mustNot(queryProvider.getTermQuery(
                         "titleType", NOT_MATCH_MOVIES)))._toQuery();
 
         return elasticsearchEngine.getQueryResult(40, query);
@@ -76,9 +77,9 @@ public class QueryServiceImpl implements QueryService{
     private Query checkType(String type) {
         switch(type){
             case "MOVIE":
-                return queryProvider.getMatchQuery("titleType", MOVIES);
+                return queryProvider.getTermQuery("titleType", MOVIES);
             case "EPISODE":
-                return queryProvider.getMatchQuery("titleType", EPISODE);
+                return queryProvider.getTermQuery("titleType", EPISODE);
         }
         return null;
     }
@@ -94,7 +95,7 @@ public class QueryServiceImpl implements QueryService{
     @Override
     public List<Movie> getRecommended(int year, int size) throws IOException {
         List<Query> queries = new ArrayList<>();
-        queries.add(queryProvider.getMatchQuery("titleType", MOVIES));
+        queries.add(queryProvider.getTermQuery("titleType", MOVIES));
         queries.add(queryProvider.getMultiMatchQuery("startYear", "endYear",
                 String.valueOf(year)));
         queries.add(queryProvider.getMinNumOfVotes(50000));
@@ -195,8 +196,7 @@ public class QueryServiceImpl implements QueryService{
      * @param mustGenres
      * @param mustNotGenres
      * @param excludedIds
-     * @param mustTypes
-     * @param mustNotTypes
+     * @param types
      * @return List of movies
      * @throws IOException
      */
@@ -204,15 +204,14 @@ public class QueryServiceImpl implements QueryService{
     public List<Movie> getFilmsByGenres(String[] mustGenres,
                                         String[] mustNotGenres,
                                         String[] excludedIds,
-                                        String[] mustTypes,
-                                        String[] mustNotTypes) throws IOException {
+                                        String types) throws IOException {
         List<Query> queries = new ArrayList<>();
         if(mustGenres.length > 0){
             queries.add(queryProvider.getTermQuery("genres", mustGenres));
         }
 
-        if(mustTypes.length > 0){
-            queries.add(queryProvider.getTermQuery("titleType", mustTypes));
+        if(checkType(types) != null){
+            queries.add(checkType(types));
         }
 
         queries.add(queryProvider.getMinNumOfVotes(300000));
@@ -221,9 +220,7 @@ public class QueryServiceImpl implements QueryService{
                 BoolQuery.of(b -> b.must(queries).mustNot(queryProvider
                         .getTermQuery("genres", mustNotGenres))
                         .mustNot(queryProvider.getTermQuery("tconst",
-                                        excludedIds))
-                        .mustNot(queryProvider.getTermQuery("titleType",
-                                mustNotTypes)))._toQuery();
+                                        excludedIds)))._toQuery();
 
         return elasticsearchEngine.getQueryResult(20, query, queryProvider.getAggregations());
     }
