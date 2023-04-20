@@ -3,6 +3,7 @@ import type {Media} from "../util";
 import {endpoints} from "@/store/endpoints";
 import type {Module} from "vuex";
 import {myFetch} from "@/store/util";
+import {store} from "@/store/store";
 
 
 async function fetchTrending(): Promise<Media[]> {
@@ -29,12 +30,12 @@ async function fetchNew(): Promise<Media[]> {
     return await myFetch(endpoints.API_RECOMMENDED, params);
 }
 
-async function fetchByTitle(query: string, type: string): Promise<Media[]> {
+async function fetchByTitle(query: string, type: string, images: boolean = true): Promise<Media[]> {
     let params = new Map<string, string>([
         ["title", query],
         ["type", type],
     ]);
-    return await myFetch(endpoints.API_TITLE, params);
+    return await myFetch(endpoints.API_TITLE, params, images);
 }
 
 // Executed when the page is loaded.
@@ -53,6 +54,8 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
         new: [],
         topAllTime: [],
         notToWatch: [],
+        preResults: [],
+        searching: false,
     },
     getters: {
         getResults: (state: State) => state.results,
@@ -60,6 +63,8 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
         getNew: (state: State) => state.new,
         getTopAllTime: (state: State) => state.topAllTime,
         getNotToWatch: (state: State) => state.notToWatch,
+        getPreResults: (state: State) => state.preResults,
+        getSearching: (state: State) => state.searching,
     },
     mutations: {
         setResults: (state: State, results: Media[]) => state.results = results,
@@ -67,6 +72,8 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
         setNew: (state: State, newMedia: Media[]) => state.new = newMedia,
         setTopAllTime: (state: State, topAllTime: Media[]) => state.topAllTime = topAllTime,
         setNotToWatch: (state: State, notToWatch: Media[]) => state.notToWatch = notToWatch,
+        setPreResults: (state: State, preResults: string[]) => state.preResults = preResults,
+        setSearching: (state: State, searching: boolean) => state.searching = searching,
     },
     actions: {
         load({commit}) {
@@ -77,6 +84,9 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
             commit("FINDR/addFINDRCardMedia", trendingMedia[0], {root: true});
         },
         async search({commit}): Promise<void> {
+            store.commit("setPreResults", []);
+            commit("setSearching", true);
+
             let dropdown: HTMLSelectElement = (document.getElementById("media-type") as HTMLSelectElement);
             let searchBar: HTMLInputElement = (document.getElementById("media-query") as HTMLInputElement);
             if (dropdown && searchBar) {
@@ -89,7 +99,7 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
                     // Re-sort results with undefined or null poster paths
                     let resultsWOImages: Media[] = [];
                     results.forEach((media: Media) => {
-                        let flag: boolean|undefined = (media.posterPath?.includes("undefined") || media.posterPath?.includes("null"));
+                        let flag: boolean | undefined = (media.posterPath?.includes("undefined") || media.posterPath?.includes("null"));
                         if (flag) {
                             resultsWOImages.push(results.splice(results.indexOf(media), 1)[0]);
                         }
@@ -111,7 +121,24 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
                     commit("setResults", []);
                 }
             }
+            store.commit("setSearching", false);
         },
+        async preSearch({commit}): Promise<void> {
+            let dropdown: HTMLSelectElement = (document.getElementById("media-type") as HTMLSelectElement);
+            let searchBar: HTMLInputElement = (document.getElementById("media-query") as HTMLInputElement);
+            if (dropdown && searchBar) {
+                let type: string = dropdown.value;
+                let query: string = searchBar.value;
+                console.log("pre-searching " + type + ": " + query);
+                let results: Media[] = await fetchByTitle(query, type, false);
+                let resultNames: string[] = [];
+                for (let result of results) {
+                    resultNames.push(result.title);
+                }
+
+                commit("setPreResults", resultNames.slice(0, 5));
+            }
+        }
     }
 }
 
@@ -123,4 +150,6 @@ interface State {
     new: Media[],
     topAllTime: Media[],
     notToWatch: Media[],
+    preResults: string[],
+    searching: boolean,
 }

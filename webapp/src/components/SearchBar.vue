@@ -1,21 +1,25 @@
 <template>
   <div class="searchbar">
-    <select class="searchbar--filters" id="media-type" v-on:input="store.dispatch('search')">
+    <select class="searchbar--filters" id="media-type" v-on:input="store.dispatch('preSearch')">
       <option class="searchbar--filter" value="ALL">All</option>
       <option class="searchbar--filter" value="MOVIE">Movies</option>
       <option class="searchbar--filter" value="EPISODE">Series</option>
     </select>
     <input class="searchbar--input" type="text" placeholder="Search IMDb..." autofocus id="media-query"
            @focusout="reset()"
-           v-on:input="store.dispatch('search')"/>
+           v-on:input="store.dispatch('preSearch')"
+           v-on:keyup.enter="store.dispatch('search')"/>
   </div>
+  <PreResults></PreResults>
 </template>
 
 <script lang="ts">
 import {store} from "@/store/store";
+import PreResults from "@/components/PreResults.vue";
 
 export default {
   name: "SearchBar",
+  components: {PreResults},
   computed: {
     store() {
       return store

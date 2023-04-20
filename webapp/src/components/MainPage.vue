@@ -1,6 +1,9 @@
 <!--suppress JSUnresolvedVariable -->
 <template>
-  <div class="main--main">
+  <div v-if="store.getters['getSearching']" class="div-loading">
+    <h1 class="loading">LOADING...</h1>
+  </div>
+  <div class="main--main" v-else>
     <CardCarousel v-if="store.getters['FINDR/getLikedMedia'].length > 0" title="Your FINDR™ Choices"
                   :media="store.getters['FINDR/getLikedMedia']" v-slot="slotProps">
       <TransitionGroup name="list">
@@ -60,6 +63,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.div-loading {
+  font-size: 200%;
+  text-align: center !important;
+  .loading {
+    color: var(--accent-color);
+  }
+}
+
 .main--main {
   display: grid;
   width: 60vw;

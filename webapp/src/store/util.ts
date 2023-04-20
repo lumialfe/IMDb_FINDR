@@ -35,9 +35,10 @@ export interface ComponentCustomProperties {
 }
 
 export const movieTypes = ["short", "movie", "tvMovie", "tvShort"];
+
 //export const tvTypes = ["tvSeries", "tvMiniSeries", "tvSpecial", "tvEpisode"];
 
-export async function myFetch(endpoint: string, params?: Map<string, string>): Promise<Media[]> {
+export async function myFetch(endpoint: string, params?: Map<string, string>, images: boolean = true): Promise<Media[]> {
     let url = endpoint;
     if (params) {
         url += "?";
@@ -47,10 +48,10 @@ export async function myFetch(endpoint: string, params?: Map<string, string>): P
         url = url.substring(0, url.length - 1);
     }
     console.log(url);
-    return await fetchMedia(url);
+    return await fetchMedia(url, images);
 }
 
-async function fetchMedia(url: string): Promise<Media[]> {
+async function fetchMedia(url: string, images: boolean = true): Promise<Media[]> {
     let ret: Media[] = [];
     await fetch(url).then((response) => response.json())
         .then(async (data) => {
@@ -71,7 +72,9 @@ async function fetchMedia(url: string): Promise<Media[]> {
                     runtimeMinutes: media.runtimeMinutes,
                     trailer: "https://www.youtube.com/embed/dQw4w9WgXcQ",
                 };
-                await fetchMovieData(m);
+                if (images) {
+                    await fetchMovieData(m);
+                }
                 ret.push(m);
             }
         }).catch((ex) => {

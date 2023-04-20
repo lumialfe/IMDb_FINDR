@@ -47,6 +47,8 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
     },
     actions: {
         async updateFINDRResults({commit, state}): Promise<void> {
+            store.commit("setSearching", true);
+
             store.commit("setResults", []) //Reset results
             let results: Media[] = [];
 
@@ -121,6 +123,7 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
             }
 
             store.commit("setResults", results);
+            store.commit("setSearching", false);
         },
         invertFINDR: ({commit, state}) => {
             commit("setFINDR", !state.FINDR);
