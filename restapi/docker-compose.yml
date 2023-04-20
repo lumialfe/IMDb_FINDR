@@ -1,7 +1,7 @@
 version: '2'
 services:
   elasticsearch:
-    image: "noeliai/imdb:version2"
+    image: "noeliai/imdb:version3"
     hostname: "elasticsearch"
     container_name: elasticsearch-docker_
     environment:
