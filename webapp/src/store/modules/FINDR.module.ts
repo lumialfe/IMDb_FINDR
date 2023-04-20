@@ -31,7 +31,7 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
         addLikedMedia: (state: State, likedMedia: Media) => state.likedMedia.push(likedMedia),
         removeLikedMedia: (state: State, likedMedia: Media) => {
             state.likedMedia.splice(state.likedMedia.indexOf(likedMedia), 1);
-            store.dispatch("FINDR/updateFINDRResults");
+            store.dispatch("FINDR/updateFINDRResults").then(r => r);
         },
         clearLikedMedia: (state: State) => state.likedMedia = [],
 
