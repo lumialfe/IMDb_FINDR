@@ -16,11 +16,16 @@ public class QueryServiceImpl implements QueryService{
     private final ElasticsearchEngine elasticsearchEngine;
     private QueryProvider queryProvider = new QueryProvider();
 
-    private static final String[] NOT_MATCH_MOVIES = {"tvEpisode", "video",
+    /*private static final String[] NOT_MATCH_MOVIES = {"tvEpisode", "video",
             "videoGame", "tvPilot"};
     private static final String[] MOVIES = {"short", "movie", "tvMovie", "tvShort"};
     private static final String[] EPISODE = {"tvSeries", "tvMiniSeries",
-            "tvSpecial"};
+            "tvSpecial"};*/
+
+    private static final String NOT_MATCH_MOVIES = "tvEpisode, video, " +
+            "videoGame, tvPilot";
+    private static final String MOVIES = "short, movie, tvMovie, tvShort";
+    private static final String EPISODE = "tvSeries, tvMiniSeries, tvSpecial";
 
     @Autowired
     public QueryServiceImpl(ElasticsearchEngine elasticsearchEngine) {
@@ -61,7 +66,7 @@ public class QueryServiceImpl implements QueryService{
         queries.add(queryProvider.getRangedQuery("avgRating", 3.0));
 
         Query query =
-                BoolQuery.of(q -> q.must(queries).mustNot(queryProvider.getTermQuery(
+                BoolQuery.of(q -> q.must(queries).mustNot(queryProvider.getMatchQuery(
                         "titleType", NOT_MATCH_MOVIES)))._toQuery();
 
         return elasticsearchEngine.getQueryResult(40, query);
@@ -77,9 +82,9 @@ public class QueryServiceImpl implements QueryService{
     private Query checkType(String type) {
         switch(type){
             case "MOVIE":
-                return queryProvider.getTermQuery("titleType", MOVIES);
+                return queryProvider.getMatchQuery("titleType", MOVIES);
             case "EPISODE":
-                return queryProvider.getTermQuery("titleType", EPISODE);
+                return queryProvider.getMatchQuery("titleType", EPISODE);
         }
         return null;
     }
@@ -95,7 +100,7 @@ public class QueryServiceImpl implements QueryService{
     @Override
     public List<Movie> getRecommended(int year, int size) throws IOException {
         List<Query> queries = new ArrayList<>();
-        queries.add(queryProvider.getTermQuery("titleType", MOVIES));
+        queries.add(queryProvider.getMatchQuery("titleType", MOVIES));
         queries.add(queryProvider.getMultiMatchQuery("startYear", "endYear",
                 String.valueOf(year)));
         queries.add(queryProvider.getMinNumOfVotes(50000));
