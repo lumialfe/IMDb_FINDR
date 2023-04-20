@@ -130,7 +130,7 @@ npm run lint
   docker pull noeliai/imdb:version2
   ```
 
-### Endpoints:
+### Endpoints
 
 #### Index:
 
