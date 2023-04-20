@@ -82,8 +82,7 @@ public class QueryProvider {
      * @return Query
      */
     public Query getTitle(String title){
-        return MatchPhrasePrefixQuery.of(m -> m.field("primaryTitle").field(
-                        "originalTitle")
+        return MatchPhrasePrefixQuery.of(m -> m.field("primaryTitle")
                 .query(title))._toQuery();
     }
 
