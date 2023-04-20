@@ -17,7 +17,7 @@
           {{ this.media.averageRating === -1 ? "N/A" : this.media.averageRating }}
         </span>
           <span>
-         {{ this.media.type.toUpperCase() }}
+         {{ this.media.type[0].toUpperCase() }}
         </span>
         </div>
         <div class="info--trailer">

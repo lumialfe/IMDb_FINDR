@@ -51,13 +51,26 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
             let results: Media[] = [];
 
             let weights = weightFINDRChoices(state.likedMedia, state.dislikedMedia);
+
+            let genreWeights = weights[0];
             let mustGenres = [];
             let mustNotGenres = [];
-            for (let [key, value] of weights) {
+            for (let [key, value] of genreWeights) {
                 if (value >= .5) {
                     mustGenres.push(key);
                 } else {
                     mustNotGenres.push(key);
+                }
+            }
+
+            let typeWeights = weights[1];
+            let mustTypes = [];
+            let mustNotTypes = [];
+            for (let [key, value] of typeWeights) {
+                if (value >= .5) {
+                    mustTypes.push(key);
+                } else {
+                    mustNotTypes.push(key);
                 }
             }
 
@@ -69,6 +82,8 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
             let params = new Map<string, string>([
                 ["mustGenres", mustGenres.slice(0, 2).join(",")],
                 ["mustNotGenres", mustNotGenres.slice(0, 2).join(",")],
+                ["mustTypes", mustTypes.slice(0, 2).join(",")],
+                ["mustNotTypes", mustNotTypes.slice(0, 2).join(",")],
                 ["excludedIds", excludedMovies.join(",")],
             ]);
 
@@ -79,8 +94,10 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
             // If no results are found, try again with a less strict search
             if (results.length === 0) {
                 results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
-                    ["mustGenres", mustGenres.join(",")],
+                    ["mustGenres", mustGenres.slice(0, 2).join(",")],
                     ["mustNotGenres", ""],
+                    ["mustTypes", mustTypes.slice(0, 2).join(",")],
+                    ["mustNotTypes", ""],
                     ["excludedIds", excludedMovies.join(",")],
                 ]));
             }
@@ -90,6 +107,8 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
                 results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
                     ["mustGenres", ""],
                     ["mustNotGenres", ""],
+                    ["mustTypes", ""],
+                    ["mustNotTypes", ""],
                     ["excludedIds", excludedMovies.join(",")],
                 ]));
             }
@@ -170,15 +189,14 @@ function weightProperty(liked: Media[], disliked: Media[], properties: string, p
     return sortedWeights;
 }
 
-function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number> {
+function weightFINDRChoices(liked: Media[], disliked: Media[]): Map<string, number>[] {
     let genreWeights = weightProperty(liked, disliked, "genres", "genre", 1.5, .75);
+    let typeWeights = weightProperty(liked, disliked, "type", "type", 1.5, .75);
 
     //TODO: In the future, we can add more properties to weight.
-    //let typeWeights = weightProperty(liked, disliked, "types", "type", 1.1, .9);
     //let directorWeights = weightProperty(liked, disliked, "directors", "director", 1.1, .9);
     //let starringWeights = weightProperty(liked, disliked, "starring", "starring", 1.1, .9)
     //return [genreWeights, typeWeights, directorWeights, starringWeights];
 
-    console.log(genreWeights);
-    return genreWeights;
+    return [genreWeights, typeWeights];
 }

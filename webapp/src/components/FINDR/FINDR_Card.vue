@@ -20,7 +20,7 @@
         <div class="card--info">
           <div class="card--title">{{ media.title }}</div>
           <div class="card--categories">
-            <span>{{ media.type.toUpperCase() }} </span>
+            <span>{{ media.type[0].toUpperCase() }} </span>
             <span v-for="genre in media.genres"> {{ genre }}</span>
           </div>
           <div class="card--buttons">
