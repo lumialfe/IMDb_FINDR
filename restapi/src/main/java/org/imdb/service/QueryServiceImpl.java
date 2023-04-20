@@ -195,26 +195,35 @@ public class QueryServiceImpl implements QueryService{
      * @param mustGenres
      * @param mustNotGenres
      * @param excludedIds
+     * @param mustTypes
+     * @param mustNotTypes
      * @return List of movies
      * @throws IOException
      */
     @Override
     public List<Movie> getFilmsByGenres(String[] mustGenres,
                                         String[] mustNotGenres,
-                                        String[] excludedIds) throws IOException {
+                                        String[] excludedIds,
+                                        String[] mustTypes,
+                                        String[] mustNotTypes) throws IOException {
         List<Query> queries = new ArrayList<>();
         if(mustGenres.length > 0){
             queries.add(queryProvider.getTermQuery("genres", mustGenres));
+        }
+
+        if(mustTypes.length > 0){
+            queries.add(queryProvider.getTermQuery("titleType", mustTypes));
         }
 
         queries.add(queryProvider.getMinNumOfVotes(300000));
 
         Query query =
                 BoolQuery.of(b -> b.must(queries).mustNot(queryProvider
-                        .getTermQuery("genres", mustNotGenres)).mustNot(
-                                queryProvider.getTermQuery("tconst",
-                                        excludedIds)
-                ))._toQuery();
+                        .getTermQuery("genres", mustNotGenres))
+                        .mustNot(queryProvider.getTermQuery("tconst",
+                                        excludedIds))
+                        .mustNot(queryProvider.getTermQuery("titleType",
+                                mustNotTypes)))._toQuery();
 
         return elasticsearchEngine.getQueryResult(20, query, queryProvider.getAggregations());
     }

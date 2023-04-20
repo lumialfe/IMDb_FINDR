@@ -74,8 +74,12 @@ public interface QueryService {
      * @param mustGenres
      * @param mustNotGenres
      * @param excludedIds
+     * @param mustTypes
+     * @param mustNotTypes
      * @return List of movies
      * @throws IOException
      */
-    List<Movie> getFilmsByGenres(String[] mustGenres, String[] mustNotGenres, String[] excludedIds) throws IOException;
+    List<Movie> getFilmsByGenres(String[] mustGenres, String[] mustNotGenres,
+                                 String[] excludedIds, String[] mustTypes,
+                                 String[] mustNotTypes) throws IOException;
 }
