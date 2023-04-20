@@ -136,7 +136,14 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
                     resultNames.push(result.title);
                 }
 
-                commit("setPreResults", resultNames.slice(0, 5));
+                if (results.length === 0) {
+                    (document.getElementById("media-query") as HTMLInputElement).style.border = "2px solid red";
+                    commit("setPreResults", []);
+                } else {
+                    (document.getElementById("media-query") as HTMLInputElement).style.border = "none";
+                    commit("setPreResults", resultNames.slice(0, 5));
+                }
+
             }
         }
     }

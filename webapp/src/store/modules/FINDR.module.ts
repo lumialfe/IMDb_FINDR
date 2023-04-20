@@ -31,7 +31,7 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
         addLikedMedia: (state: State, likedMedia: Media) => state.likedMedia.push(likedMedia),
         removeLikedMedia: (state: State, likedMedia: Media) => {
             state.likedMedia.splice(state.likedMedia.indexOf(likedMedia), 1);
-            store.dispatch("FINDR/updateFINDRCardMedia").then(r => r);
+            store.dispatch("FINDR/updateFINDRResults");
         },
         clearLikedMedia: (state: State) => state.likedMedia = [],
 
@@ -47,6 +47,10 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
     },
     actions: {
         async updateFINDRResults({commit, state}): Promise<void> {
+            if (state.likedMedia.length === 0 && state.dislikedMedia.length === 0) {
+                store.commit("setResults", []) //Reset results
+                return;
+            }
             store.commit("setSearching", true);
 
             store.commit("setResults", []) //Reset results
