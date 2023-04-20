@@ -29,7 +29,7 @@ import java.util.List;
 @Component
 public class ElasticsearchEngineImpl implements  ElasticsearchEngine{
     private final ElasticSearchConfig elasticSearchConfig;
-    private static final String INDEX = "imdb";
+    private static final String INDEX = "imdb5";
 
 
     @Autowired

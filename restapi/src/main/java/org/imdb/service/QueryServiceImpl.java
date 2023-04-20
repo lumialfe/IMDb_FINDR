@@ -16,12 +16,6 @@ public class QueryServiceImpl implements QueryService{
     private final ElasticsearchEngine elasticsearchEngine;
     private QueryProvider queryProvider = new QueryProvider();
 
-    /*private static final String[] NOT_MATCH_MOVIES = {"tvEpisode", "video",
-            "videoGame", "tvPilot"};
-    private static final String[] MOVIES = {"short", "movie", "tvMovie", "tvShort"};
-    private static final String[] EPISODE = {"tvSeries", "tvMiniSeries",
-            "tvSpecial"};*/
-
     private static final String NOT_MATCH_MOVIES = "tvEpisode, video, " +
             "videoGame, tvPilot";
     private static final String MOVIES = "short, movie, tvMovie, tvShort";
@@ -58,7 +52,6 @@ public class QueryServiceImpl implements QueryService{
     public List<Movie> getMoviesByTitle(String title, String type) throws IOException {
         List<Query> queries = new ArrayList<>();
         queries.add(queryProvider.getTitle(title));
-
         Query typeQ = checkType(type);
         if(typeQ != null){
             queries.add(typeQ);

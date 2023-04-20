@@ -1,0 +1,30 @@
+{
+	"settings": {
+		"analysis" : {
+			"analyzer" : {
+				"my_analyzer" : {
+					"type": "custom",
+					"tokenizer" : "standard",
+					"char_filter": [
+						"my_mappings_char_filter"
+					],
+					"filter" : ["lowercase", "my_stemmer"]
+				}
+			},
+			"char_filter": {
+				"my_mappings_char_filter": {
+					"type": "mapping",
+					"mappings": [
+						"- => "
+					]
+				}
+			},
+			"filter" : {
+				"my_stemmer" : {
+					"type" : "stemmer",
+					"language" : "english"
+				}
+			}
+		}
+	}
+}

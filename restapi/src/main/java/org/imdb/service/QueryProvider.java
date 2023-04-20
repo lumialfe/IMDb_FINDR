@@ -113,4 +113,5 @@ public class QueryProvider {
         return TermsQuery.of(t -> t.field(field).terms(terms)
         )._toQuery();
     }
+
 }
