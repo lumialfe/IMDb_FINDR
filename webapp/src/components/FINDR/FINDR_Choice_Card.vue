@@ -37,6 +37,7 @@ export default {
   display: grid;
   grid-template-rows: 90% 10%;
   background-color: var(--main-color);
+  min-height: 16rem;
 
   img {
     width: 100%;
@@ -77,6 +78,7 @@ export default {
   .FINDR-choice {
     max-width: 50%;
     font-size: 50%;
+    min-height: 50%;
 
     img {
       width: 100%;

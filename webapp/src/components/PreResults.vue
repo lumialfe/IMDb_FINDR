@@ -32,8 +32,8 @@ export default {
   background-color: white;
   border-radius: .5rem;
   padding: 1%;
-  top: 6%;
-  left: 31.4%;
+  top: 7.2%;
+  left: 31.2%;
   width: 34%;
   display: flex;
   flex-direction: column;
