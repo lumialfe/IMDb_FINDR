@@ -78,6 +78,7 @@ export default {
       &:hover {
         font-size: 200%;
         transition: all 0.3s ease-in-out;
+        box-shadow: none;
       }
     }
 

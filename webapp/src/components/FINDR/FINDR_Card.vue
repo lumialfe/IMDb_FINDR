@@ -92,7 +92,7 @@ export default defineComponent({
 
   text-align: center;
 
-  background-color: var(--main-color-light);
+  background-color: var(--background-color);
   border-radius: 1.3rem;
 
   width: 85%;
@@ -126,7 +126,7 @@ export default defineComponent({
     .card--title {
       font-weight: bold;
       font-size: 200%;
-      color: white;
+      color: var(--title-color);
     }
 
     .card--categories {

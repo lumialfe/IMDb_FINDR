@@ -22,19 +22,19 @@ export default {
       document.getElementById('app-color-changer').classList.add('dark-mode')
       document.documentElement.style.setProperty('--background-color', '#101010');
       document.documentElement.style.setProperty('--main-color', '#2f2f2f');
-      document.documentElement.style.setProperty('--main-color-light', '#4f4f4f');
       document.documentElement.style.setProperty('--link-color', '#8f8f8f');
       document.documentElement.style.setProperty('--title-color', '#b6b6b6');
+      document.documentElement.style.setProperty('--accent-color', '#f3ce13');
       this.darkMode = true
     },
 
     light() {
       document.getElementById("app-color-changer").classList.remove('dark-mode')
-      document.documentElement.style.setProperty('--background-color', '#e3e3e3');
-      document.documentElement.style.setProperty('--main-color', '#ababab');
-      document.documentElement.style.setProperty('--main-color-light', '#646464');
+      document.documentElement.style.setProperty('--background-color', '#ffffff');
+      document.documentElement.style.setProperty('--main-color', '#b2babd');
       document.documentElement.style.setProperty('--link-color', '#1e1e1e');
       document.documentElement.style.setProperty('--title-color', '#000000');
+      document.documentElement.style.setProperty('--accent-color', '#f3ce13');
       this.darkMode = false
     },
 
