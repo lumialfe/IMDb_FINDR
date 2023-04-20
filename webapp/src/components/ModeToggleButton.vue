@@ -1,10 +1,8 @@
 <template>
-  <div id="app">
-    <div class="flex">
-      <div class="mode-toggle" @click="modeToggle" :class="darkDark">
-        <div class="toggle">
-          <div id="dark-mode" type="checkbox"></div>
-        </div>
+  <div id="app-color-changer" class="dark-mode">
+    <div class="mode-toggle" @click="modeToggle">
+      <div class="toggle">
+        <div id="dark-mode" type="checkbox"></div>
       </div>
     </div>
   </div>
@@ -21,7 +19,7 @@ export default {
 
   methods: {
     dark() {
-      document.querySelector('body').classList.add('dark-mode')
+      document.getElementById('app-color-changer').classList.add('dark-mode')
       document.documentElement.style.setProperty('--background-color', '#101010');
       document.documentElement.style.setProperty('--main-color', '#2f2f2f');
       document.documentElement.style.setProperty('--main-color-light', '#4f4f4f');
@@ -31,7 +29,7 @@ export default {
     },
 
     light() {
-      document.querySelector('body').classList.remove('dark-mode')
+      document.getElementById("app-color-changer").classList.remove('dark-mode')
       document.documentElement.style.setProperty('--background-color', '#e3e3e3');
       document.documentElement.style.setProperty('--main-color', '#ababab');
       document.documentElement.style.setProperty('--main-color-light', '#646464');
@@ -61,10 +59,10 @@ export default {
 $dark: #171717;
 $mode-toggle-bg: #262626;
 
+
 // _mode-toggle.scss
 .mode-toggle {
   position: relative;
-  //margin: auto .5rem .5rem auto;
   padding: 0;
   width: 44px;
   height: 24px;
@@ -117,7 +115,7 @@ $mode-toggle-bg: #262626;
   }
 }
 
-body.dark-mode {
+#app-color-changer.dark-mode {
   .mode-toggle {
     background-color: lighten($mode-toggle-bg, 5%);
 
@@ -137,16 +135,7 @@ body.dark-mode {
   }
 }
 
-.flex {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-#app {
+#app-color-changer {
   position: fixed;
   top: 95%;
   left: 1%;
