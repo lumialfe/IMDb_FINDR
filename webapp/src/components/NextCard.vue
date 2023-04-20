@@ -29,7 +29,7 @@ export default {
 .movie-card {
   display: grid;
   grid-template-columns: 60% auto;
-  background-color: $main-color;
+  background-color: var(--main-color);
   margin: auto;
   height: fit-content;
   width: 100%;
@@ -53,7 +53,7 @@ export default {
   }
 
   .movie-card--info {
-    color: $link-color;
+    color: var(--link-color);
     padding: .8rem;
     display: flex;
     flex-direction: column;
@@ -67,14 +67,14 @@ export default {
       flex-direction: column;
 
       .info--title--link {
-        color: $title-color;
+        color: var(--title-color);
       }
     }
 
     .info--rating {
 
       .checked {
-        color: $accent-color;
+        color: var(--accent-color);
       }
     }
   }

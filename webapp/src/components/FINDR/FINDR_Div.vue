@@ -37,7 +37,7 @@ export default {
 @import "../../assets/styles/styles.scss";
 
 .main--FINDR {
-  background-color: $main-color;
+  background-color: var(--main-color);
   border-radius: 1rem;
   height: fit-content;
   padding-bottom: 5%;

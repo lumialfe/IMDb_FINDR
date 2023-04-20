@@ -36,7 +36,7 @@ export default defineComponent({
 @import "../assets/styles/styles.scss";
 
 header {
-  background-color: $main-color;
+  background-color: var(--main-color);
 
   .header-content {
     width: 60%;
@@ -63,7 +63,7 @@ header {
     .header--links {
       display: flex;
       justify-content: space-between;
-      color: $link-color;
+      color: var(--link-color);
 
       button {
         min-width: fit-content;
@@ -71,7 +71,7 @@ header {
 
         &:hover {
           transition: color .3s ease-in-out;
-          color: $accent-color;
+          color: var(--accent-color);
         }
       }
     }

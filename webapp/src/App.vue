@@ -7,6 +7,7 @@ import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import FINDR_Div from "@/components/FINDR/FINDR_Div.vue";
 import MainPage from "@/components/MainPage.vue";
+import ModeToggleButton from "@/components/ModeToggleButton.vue";
 
 export default defineComponent({
   computed: {
@@ -20,7 +21,7 @@ export default defineComponent({
   created() {
     this.store.dispatch("load");
   },
-  components: {MainPage, FINDR_Div, Footer, Header, BottomSheet},
+  components: {ModeToggleButton, MainPage, FINDR_Div, Footer, Header, BottomSheet},
 });
 </script>
 
@@ -34,6 +35,8 @@ export default defineComponent({
     <BottomSheet></BottomSheet>
   </main>
   <Footer></Footer>
+
+  <ModeToggleButton></ModeToggleButton>
 </template>
 
 <style scoped lang="scss">

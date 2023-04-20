@@ -20,7 +20,7 @@
         <div class="card--info">
           <div class="card--title">{{ media.title }}</div>
           <div class="card--categories">
-            <span>{{ media.type[0].toUpperCase() }} </span>
+            <span>{{ media.type.toUpperCase() }} </span>
             <span v-for="genre in media.genres"> {{ genre }}</span>
           </div>
           <div class="card--buttons">
@@ -92,7 +92,7 @@ export default defineComponent({
 
   text-align: center;
 
-  background-color: $main-color-light;
+  background-color: var(--main-color-light);
   border-radius: 1.3rem;
 
   width: 85%;
@@ -134,7 +134,7 @@ export default defineComponent({
       gap: 1rem;
       margin: .5rem auto 0;
       font-size: 110%;
-      color: $link-color;
+      color: var(--link-color);
       text-align: center;
 
       span {
@@ -156,7 +156,7 @@ export default defineComponent({
         width: 5rem;
         font-size: 200%;
         text-align: center;
-        color: $title-color;
+        color: var(--title-color);
         background: none;
       }
 

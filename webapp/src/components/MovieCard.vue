@@ -17,7 +17,7 @@
           {{ this.media.averageRating === -1 ? "N/A" : this.media.averageRating }}
         </span>
           <span>
-         {{ this.media.type[0].toUpperCase() }}
+         {{ this.media.type.toUpperCase() }}
         </span>
         </div>
         <div class="info--trailer">
@@ -53,7 +53,7 @@ export default {
   display: grid;
   grid-template-rows: auto 1fr;
 
-  background-color: $main-color;
+  background-color: var(--main-color);
 
   margin: auto;
 
@@ -77,14 +77,14 @@ export default {
       .info--trailer {
         a {
           .info--trailer-button {
-            color: $accent-color;
+            color: var(--accent-color);
           }
         }
       }
     }
 
     transition: all 0.3s ease-in-out;
-    background-color: $main-color;
+    background-color: var(--main-color);
     width: 270px;
   }
 
@@ -93,7 +93,7 @@ export default {
   }
 
   .movie-card--info {
-    color: $link-color;
+    color: var(--link-color);
     padding: 1rem;
     display: grid;
     grid-template-rows: 50% auto auto;
@@ -106,10 +106,10 @@ export default {
       text-align: center;
 
       .info--title--link {
-        color: $title-color;
+        color: var(--title-color);
 
         &:hover {
-          text-decoration: underline $link-color 2px;
+          text-decoration: underline var(--link-color) 2px;
         }
 
         &:active {
@@ -126,7 +126,7 @@ export default {
       justify-content: space-around;
 
       .checked {
-        color: $accent-color;
+        color: var(--accent-color);
       }
     }
 

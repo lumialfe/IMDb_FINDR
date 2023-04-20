@@ -22,7 +22,7 @@ export interface Media {
     backdropPath?: string,
     trailer?: string,
     imdbLink: string,
-    type: string[],
+    type: string,
     runtimeMinutes: number,
     isAdult: boolean,
     startYear: number,
@@ -35,6 +35,7 @@ export interface ComponentCustomProperties {
 }
 
 export const movieTypes = ["short", "movie", "tvMovie", "tvShort"];
+//export const tvTypes = ["tvSeries", "tvMiniSeries", "tvSpecial", "tvEpisode"];
 
 export async function myFetch(endpoint: string, params?: Map<string, string>): Promise<Media[]> {
     let url = endpoint;
@@ -45,6 +46,7 @@ export async function myFetch(endpoint: string, params?: Map<string, string>): P
         }
         url = url.substring(0, url.length - 1);
     }
+    console.log(url);
     return await fetchMedia(url);
 }
 
@@ -61,7 +63,7 @@ async function fetchMedia(url: string): Promise<Media[]> {
                     title: media.primaryTitle,
                     genres: media.genres,
                     averageRating: rating === undefined ? -1 : rating.toString().substring(0, 3),
-                    type: [media.titleType],
+                    type: media.titleType,
                     startYear: media.startYear,
                     isAdult: false, // No adult movies indexed
                     directors: media.directors,
@@ -100,7 +102,7 @@ async function fetchMovieData(media: Media) {
         }
 
         let baseURL = "https://api.themoviedb.org/3/";
-        movieTypes.includes(media.type[0] as string) ? baseURL += "movie/" : baseURL += "tv/";
+        movieTypes.includes(media.type as string) ? baseURL += "movie/" : baseURL += "tv/";
 
         await fetch(baseURL + data.id + "/videos?api_key=" + apiKEY + "&language=en-US" + data.id).then(response => response.json()).then(data => {
             if (data.results.length !== 0) {

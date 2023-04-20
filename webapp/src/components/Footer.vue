@@ -24,7 +24,7 @@ export default {
 
 footer {
   grid-area: footer;
-  background-color: $main-color;
+  background-color: var(--main-color);
   margin-top: 2rem;
   width: 100%;
 
@@ -45,7 +45,7 @@ footer {
       flex-direction: column;
       flex-wrap: nowrap;
       text-align: left;
-      border-left: 3px solid $link-color;
+      border-left: 3px solid var(--link-color);
       gap: .6rem;
 
       a {

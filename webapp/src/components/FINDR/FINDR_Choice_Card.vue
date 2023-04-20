@@ -36,7 +36,7 @@ export default {
   margin: 0;
   display: grid;
   grid-template-rows: 90% 10%;
-  background-color: $main-color;
+  background-color: var(--main-color);
 
   img {
     width: 100%;
@@ -59,7 +59,7 @@ export default {
         border-radius: 100%;
         font-size: 150%;
         text-align: center;
-        color: $title-color;
+        color: var(--title-color);
         background: none;
       }
 
