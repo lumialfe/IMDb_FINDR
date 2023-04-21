@@ -68,8 +68,16 @@ export default {
   text-align: center !important;
   .loading {
     color: var(--accent-color);
+    animation: blinker 2s linear infinite;
+    @keyframes blinker {
+      50% {
+        opacity: 0;
+      }
+    }
   }
 }
+
+
 
 .main--main {
   display: grid;
