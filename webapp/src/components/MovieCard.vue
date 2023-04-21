@@ -65,7 +65,7 @@ export default {
   border-radius: 0 0 .3rem .3rem;
 
   width: 240px;
-  height: 450px;
+  height: 480px;
 
   transition: all 0.3s ease-in-out;
 
