@@ -21,8 +21,17 @@
         <div class="card--info">
           <div class="card--title">{{ media.title }}</div>
           <div class="card--categories">
-            <span>{{ media.type.toUpperCase() }} </span>
-            <span v-for="genre in media.genres"> {{ genre }}</span>
+            <div v-if='["SHORT", "MOVIE", "TVMOVIE", "TVSHORT"].includes(this.media.type.toUpperCase())'>
+              <i class="fa fa-film" aria-hidden="true"></i>
+              <span>&ensp;MOVIE</span>
+            </div>
+            <div v-else>
+              <i class="fa fa-television" aria-hidden="true"></i>
+              <span>&ensp;TV SHOW</span>
+            </div>
+            <div class="cats">
+              <span v-for="genre in media.genres"> {{ genre }}</span>
+            </div>
           </div>
           <div class="card--buttons">
             <button class="card--button" id="dislike" v-on:click="dislike"><i class="fa fa-times"
@@ -131,12 +140,22 @@ export default defineComponent({
     }
 
     .card--categories {
-      display: flex;
+      display: grid;
+      grid-template-rows: auto 1fr;
       gap: 1rem;
       margin: .5rem auto 0;
       font-size: 110%;
       color: var(--link-color);
       text-align: center;
+
+      .cats {
+        display: flex;
+        flex-flow: wrap;
+        justify-content: space-around;
+        align-items: center;
+        gap: 1rem;
+        margin: .5rem auto 0;
+      }
 
       span {
         text-align: center;

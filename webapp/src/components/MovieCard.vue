@@ -16,8 +16,13 @@
           <span class="fa fa-star checked"></span>
           {{ this.media.averageRating === -1 ? "N/A" : this.media.averageRating }}
         </span>
-          <span>
-         {{ this.media.type.toUpperCase() }}
+        <span v-if='["SHORT", "MOVIE", "TVMOVIE", "TVSHORT"].includes(this.media.type.toUpperCase())'>
+          <i class="fa fa-film" aria-hidden="true"></i>
+          <span>&ensp;MOVIE</span>
+        </span>
+        <span v-else>
+          <i class="fa fa-television" aria-hidden="true"></i>
+          <span>&ensp;TV SHOW</span>
         </span>
         </div>
         <div class="info--trailer">
@@ -85,7 +90,7 @@ export default {
 
     transition: all 0.3s ease-in-out;
     background-color: var(--main-color);
-    width: 270px;
+    width: 280px;
   }
 
   .movie-card--image {
