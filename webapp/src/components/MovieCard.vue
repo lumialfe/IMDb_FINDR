@@ -64,8 +64,8 @@ export default {
 
   border-radius: 0 0 .3rem .3rem;
 
-  width: 230px;
-  height: 100%;
+  width: 240px;
+  height: 450px;
 
   transition: all 0.3s ease-in-out;
 
@@ -80,6 +80,7 @@ export default {
       }
 
       .info--trailer {
+        display: block;
         a {
           .info--trailer-button {
             color: var(--accent-color);
@@ -91,6 +92,7 @@ export default {
     transition: all 0.3s ease-in-out;
     background-color: var(--main-color);
     width: 280px;
+    height: 480px;
   }
 
   .movie-card--image {
@@ -137,6 +139,7 @@ export default {
 
 
     .info--trailer {
+      display: none;
       text-align: center;
 
       a {

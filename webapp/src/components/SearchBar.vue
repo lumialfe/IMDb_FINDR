@@ -1,6 +1,6 @@
 <template>
   <div class="searchbar">
-    <select class="searchbar--filters" id="media-type" v-on:input="store.dispatch('preSearch')">
+    <select class="searchbar--filters" id="media-type" v-on:input="search">
       <option class="searchbar--filter" value="ALL">All</option>
       <option class="searchbar--filter" value="MOVIE">Movies</option>
       <option class="searchbar--filter" value="EPISODE">Series</option>
@@ -28,6 +28,13 @@ export default {
   methods: {
     reset() {
       (document.getElementById("media-query") as HTMLInputElement).style.border = "none";
+    },
+    search() {
+      if ((document.getElementById("media-query") as HTMLInputElement).value === "") {
+        store.dispatch("preSearch");
+      } else {
+        store.dispatch("search");
+      }
     }
   }
 }
