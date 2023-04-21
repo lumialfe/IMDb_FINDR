@@ -1,4 +1,4 @@
-# IMDB_Demo
+# IMDB FINDR™
 
 ## Project Description
 
