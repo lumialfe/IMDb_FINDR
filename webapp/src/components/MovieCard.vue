@@ -1,7 +1,7 @@
 <template>
   <a v-bind:href="media.imdbLink">
     <div class="movie-card">
-      <img loading="lazy" v-if="this.media.posterPath.includes('undefined')" src="../assets/media/missing_img.jpeg"
+      <img loading="lazy" v-if="this.media.posterPath.includes('undefined') || this.media.posterPath.includes('null')" src="../assets/media/missing_img.jpeg"
            alt="Card image"
            class="movie-card--image"/>
       <img loading="lazy" v-else v-bind:src="this.media.posterPath"
