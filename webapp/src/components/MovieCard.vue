@@ -9,7 +9,8 @@
            class="movie-card--image"/>
       <div class="movie-card--info">
         <div class="info--title">
-          <a class="info--title--link" v-bind:href="media.imdbLink">{{ this.media.title }}</a>
+          <a v-if="this.media.title.length < 20" class="info--title--link" v-bind:href="media.imdbLink">{{ this.media.title }}</a>
+          <a v-else class="info--title--link" v-bind:href="media.imdbLink">{{ this.media.title.substring(0, 20) + '...' }}</a>
         </div>
         <div class="info--rating">
         <span>
