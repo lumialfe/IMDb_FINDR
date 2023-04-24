@@ -55,7 +55,7 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
         new: [],
         topAllTime: [],
         notToWatch: [],
-        preResults: new Map<string, boolean>(),
+        preResults: [],
         searching: false,
     },
     getters: {
@@ -74,7 +74,7 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
         setTopAllTime: (state: State, topAllTime: Media[]) => state.topAllTime = topAllTime,
         setNotToWatch: (state: State, notToWatch: Media[]) => state.notToWatch = notToWatch,
         setSearching: (state: State, searching: boolean) => state.searching = searching,
-        setPreResults: (state: State, preResults: Map<string, boolean>) => state.preResults = preResults,
+        setPreResults: (state: State, preResults: Media[]) => state.preResults = preResults,
     },
     actions: {
         load({commit}) {
@@ -132,17 +132,13 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
                 let query: string = searchBar.value;
                 console.log("pre-searching " + type + ": " + query);
                 let results: Media[] = await fetchByTitle(query, type, false);
-                let resultNames: Map<string, boolean> = new Map<string, boolean>();
-                for (let result of results.slice(0, 5)) {
-                    resultNames.set(result.title, movieTypes.includes(result.type));
-                }
 
                 if (results.length === 0) {
                     (document.getElementById("media-query") as HTMLInputElement).style.border = "2px solid red";
-                    commit("setPreResults", new Map<string, boolean>());
+                    commit("setPreResults", []);
                 } else {
                     (document.getElementById("media-query") as HTMLInputElement).style.border = "none";
-                    commit("setPreResults", resultNames);
+                    commit("setPreResults", results.slice(0, 5));
                 }
 
             }
@@ -158,6 +154,6 @@ interface State {
     new: Media[],
     topAllTime: Media[],
     notToWatch: Media[],
-    preResults: Map<string, boolean>,
+    preResults: Media[],
     searching: boolean,
 }

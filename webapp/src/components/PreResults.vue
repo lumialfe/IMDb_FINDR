@@ -1,20 +1,21 @@
 <template>
-  <div class="pre-results" v-if="store.getters['getPreResults'].size !== 0">
-    <button v-for="(res, movie) in store.getters['getPreResults']" :key="res" @click="setSearch(res)">
-      <span v-if='movie'>
+  <div class="pre-results" v-if="store.getters['getPreResults'].length !== 0">
+    <button v-for="res in store.getters['getPreResults']" :key="res" @click="setSearch(res.title)">
+      <span v-if='movieTypes().includes(res.type)'>
           <i class="fa fa-film" aria-hidden="true"></i>
         </span>
       <span v-else>
           <i class="fa fa-television" aria-hidden="true"></i>
         </span>
       <span>&emsp;</span>
-      <span>{{ res[0] }}</span>
+      <span>{{ res.title }}</span>
     </button>
   </div>
 </template>
 
 <script>
 import {store} from "@/store/store";
+import {movieTypes} from "@/store/util";
 
 export default {
   name: "PreResults",
@@ -24,6 +25,9 @@ export default {
     }
   },
   methods: {
+    movieTypes() {
+      return movieTypes
+    },
     setSearch(res) {
       document.getElementById("media-query").value = res;
       store.commit("setPreResults", []);
