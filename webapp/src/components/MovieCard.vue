@@ -1,7 +1,8 @@
 <template>
   <a v-bind:href="media.imdbLink">
     <div class="movie-card">
-      <img loading="lazy" v-if="this.media.posterPath.includes('undefined') || this.media.posterPath.includes('null')" src="../assets/media/missing_img.jpeg"
+      <img loading="lazy" v-if="this.media.posterPath.includes('undefined') || this.media.posterPath.includes('null')"
+           src="../assets/media/missing_img.jpeg"
            alt="Card image"
            class="movie-card--image"/>
       <img loading="lazy" v-else v-bind:src="this.media.posterPath"
@@ -9,19 +10,22 @@
            class="movie-card--image"/>
       <div class="movie-card--info">
         <div class="info--title">
-          <a v-if="this.media.title.length < 20" class="info--title--link" v-bind:href="media.imdbLink">{{ this.media.title }}</a>
-          <a v-else class="info--title--link" v-bind:href="media.imdbLink">{{ this.media.title.substring(0, 20) + '...' }}</a>
+          <a v-if="this.media.title.length < 20" class="info--title--link"
+             v-bind:href="media.imdbLink">{{ this.media.title }}</a>
+          <a v-else class="info--title--link" v-bind:href="media.imdbLink">{{
+              this.media.title.substring(0, 20) + '...'
+            }}</a>
         </div>
         <div class="info--rating">
         <span>
           <span class="fa fa-star checked"></span>
           {{ this.media.averageRating === -1 ? "N/A" : this.media.averageRating }}
         </span>
-        <span v-if='["SHORT", "MOVIE", "TVMOVIE", "TVSHORT"].includes(this.media.type.toUpperCase())'>
+          <span v-if='["SHORT", "MOVIE", "TVMOVIE", "TVSHORT"].includes(this.media.type.toUpperCase())'>
           <i class="fa fa-film" aria-hidden="true"></i>
           <span>&ensp;MOVIE</span>
         </span>
-        <span v-else>
+          <span v-else>
           <i class="fa fa-television" aria-hidden="true"></i>
           <span>&ensp;TV SHOW</span>
         </span>
@@ -82,6 +86,7 @@ export default {
 
       .info--trailer {
         display: block;
+
         a {
           .info--trailer-button {
             color: var(--accent-color);
