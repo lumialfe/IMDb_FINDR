@@ -4,6 +4,7 @@ import {endpoints} from "@/store/endpoints";
 import type {Module} from "vuex";
 import {myFetch} from "@/store/util";
 import {store} from "@/store/store";
+import {movieTypes} from "../util";
 
 
 async function fetchTrending(): Promise<Media[]> {
@@ -54,7 +55,7 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
         new: [],
         topAllTime: [],
         notToWatch: [],
-        preResults: [],
+        preResults: new Map<string, boolean>(),
         searching: false,
     },
     getters: {
@@ -63,8 +64,8 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
         getNew: (state: State) => state.new,
         getTopAllTime: (state: State) => state.topAllTime,
         getNotToWatch: (state: State) => state.notToWatch,
-        getPreResults: (state: State) => state.preResults,
         getSearching: (state: State) => state.searching,
+        getPreResults: (state: State) => state.preResults,
     },
     mutations: {
         setResults: (state: State, results: Media[]) => state.results = results,
@@ -72,8 +73,8 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
         setNew: (state: State, newMedia: Media[]) => state.new = newMedia,
         setTopAllTime: (state: State, topAllTime: Media[]) => state.topAllTime = topAllTime,
         setNotToWatch: (state: State, notToWatch: Media[]) => state.notToWatch = notToWatch,
-        setPreResults: (state: State, preResults: string[]) => state.preResults = preResults,
         setSearching: (state: State, searching: boolean) => state.searching = searching,
+        setPreResults: (state: State, preResults: Map<string, boolean>) => state.preResults = preResults,
     },
     actions: {
         load({commit}) {
@@ -131,17 +132,17 @@ export const SearchModule: Module<State, ComponentCustomProperties> = {
                 let query: string = searchBar.value;
                 console.log("pre-searching " + type + ": " + query);
                 let results: Media[] = await fetchByTitle(query, type, false);
-                let resultNames: string[] = [];
-                for (let result of results) {
-                    resultNames.push(result.title);
+                let resultNames: Map<string, boolean> = new Map<string, boolean>();
+                for (let result of results.slice(0, 5)) {
+                    resultNames.set(result.title, movieTypes.includes(result.type));
                 }
 
                 if (results.length === 0) {
                     (document.getElementById("media-query") as HTMLInputElement).style.border = "2px solid red";
-                    commit("setPreResults", []);
+                    commit("setPreResults", new Map<string, boolean>());
                 } else {
                     (document.getElementById("media-query") as HTMLInputElement).style.border = "none";
-                    commit("setPreResults", resultNames.slice(0, 5));
+                    commit("setPreResults", resultNames);
                 }
 
             }
@@ -157,6 +158,6 @@ interface State {
     new: Media[],
     topAllTime: Media[],
     notToWatch: Media[],
-    preResults: string[],
+    preResults: Map<string, boolean>,
     searching: boolean,
 }

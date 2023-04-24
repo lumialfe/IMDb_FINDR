@@ -1,7 +1,14 @@
 <template>
-  <div class="pre-results" v-if="store.getters['getPreResults'].length !== 0">
-    <button v-for="res in store.getters['getPreResults']" :key="res" @click="setSearch(res)">
-      {{ res }}
+  <div class="pre-results" v-if="store.getters['getPreResults'].size !== 0">
+    <button v-for="(res, movie) in store.getters['getPreResults']" :key="res" @click="setSearch(res)">
+      <span v-if='movie'>
+          <i class="fa fa-film" aria-hidden="true"></i>
+        </span>
+      <span v-else>
+          <i class="fa fa-television" aria-hidden="true"></i>
+        </span>
+      <span>&emsp;</span>
+      <span>{{ res[0] }}</span>
     </button>
   </div>
 </template>
