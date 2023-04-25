@@ -95,7 +95,7 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
                 results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
                     ["mustGenres", mustGenres.slice(0, 2).join(",")],
                     ["mustNotGenres", ""],
-                    ["types", type],
+                    ["types", type.toUpperCase()],
                     ["excludedIds", excludedMovies.join(",")],
                 ]));
             }
@@ -105,7 +105,7 @@ export const FINDRModule: Module<State, ComponentCustomProperties> = {
                 results = await myFetch(endpoints.API_GENRES, new Map<string, string>([
                     ["mustGenres", ""],
                     ["mustNotGenres", ""],
-                    ["types", type],
+                    ["types", type.toUpperCase()],
                     ["excludedIds", excludedMovies.join(",")],
                 ]));
             }
